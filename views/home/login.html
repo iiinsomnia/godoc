@@ -1,0 +1,41 @@
+{{ define "css" }}
+	<link rel="stylesheet" type="text/css" href="/assets/css/login.css?v={{ .version }}"/>
+{{ end }}
+
+{{ define "content" }}
+<div class="row">
+	<div class="col-md-4 col-md-offset-4">
+		<div class="login-panel panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Please Sign In</h3>
+			</div>
+			<div class="panel-body">
+				<form id="ajax_form" role="form" action="/login/{{ .captchaID }}">
+					<fieldset>
+						<div class="form-group">
+							<input type="text" name="account" class="form-control" placeholder="用户名/邮箱" required="required" autofocus>
+						</div>
+						<div class="form-group">
+							<input type="password" name="password" class="form-control" placeholder="密码" required="required">
+						</div>
+						<div class="form-group has-feedback">
+							<input type="text" name="captcha" class="form-control" placeholder="验证码" required="required">
+							<img src="/captcha/{{ .captchaID }}" class="captcha" title="看不清？点击换一张" alt="" onclick="this.src='/captcha/{{ .captchaID }}?r='+Math.random()">
+						</div>
+						<button type="submit" class="btn btn-lg btn-success btn-block">Login</button>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{{ end }}
+
+{{ define "js" }}
+	<script type="text/javascript" src="/assets/js/alert.js?v={{ .version }}"></script>
+    <script type="text/javascript" src="/assets/js/form.js?v={{ .version }}"></script>
+{{ end }}
+
+{{ define "login" }}
+	{{ template "normal" . }}
+{{ end }}

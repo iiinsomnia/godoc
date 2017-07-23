@@ -1,0 +1,110 @@
+body {
+    font-style: normal;
+    font-family: PingFang SC, Helvetica, Luxi Sans, DejaVu Sans, Tahoma, Hiragino Sans GB, STHeiti, Microsoft YaHei, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-smoothing: antialiased;
+}
+table th, table td {
+    white-space: nowrap !important;
+}
+ul {
+    list-style: none;
+    margin: 0;
+}
+select {
+    font-size: 14px;
+    height: 34px;
+    vertical-align: middle;
+}
+textarea {
+    resize: none;
+}
+a:hover {
+    text-decoration: none;
+}
+i.required{
+    font-style: normal;
+    color: #ff0000;
+}
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    margin: 0;
+}
+.white {
+    color: #ffffff !important;
+}
+.align-center {
+    text-align: center;
+}
+.primary {
+    color: #337ab7;
+}
+.success {
+    color: #5cb85c;
+}
+.warning {
+    color: #f0ad4e;
+}
+.danger {
+    color: #d9534f;
+}
+.bg-primary {
+    background-color: #337ab7;
+}
+.bg-success {
+    background-color: #5cb85c;
+}
+.bg-warning {
+    background-color: #f0ad4e;
+}
+.bg-danger {
+    background-color: #d9534f;
+}
+.border-primary {
+    border-color: #337ab7;
+}
+.border-success {
+    border-color: #5cb85c;
+}
+.border-warning {
+    border-color: #f0ad4e;
+}
+.border-danger {
+    border-color: #d9534f;
+}
+.margin-top-20 {
+    margin-top: 20px;
+}
+/* other */
+.breadcrumb {
+    margin-top: 20px;
+}
+.page-header {
+    position: relative;
+}
+.view-body .section-content {
+    padding: 0 20px;
+}
+.opt-wrap {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+.sidebar-search a {
+    padding: 6px 12px !important;
+}
+.sidebar-search a.active {
+    color: #fff !important;
+    background-color: #5cb85c !important;
+    border-color: #4cae4c !important;
+}
+.sidebar-search a:hover {
+    background-color: #449d44 !important;
+    border-color: #398439 !important;
+}
+.markdown-body {
+    font-family: PingFang SC, Helvetica, Luxi Sans, DejaVu Sans, Tahoma, Hiragino Sans GB, STHeiti, Microsoft YaHei, Arial, sans-serif;
+}
+.markdown-body pre {
+    font-family: Menlo, Monaco, Consolas, Courier, monospace
+}

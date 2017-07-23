@@ -1,0 +1,105 @@
+{{ define "css" }}{{ end }}
+
+{{ define "nav" }}
+	<ul class="nav" id="side-menu">
+		<li class="sidebar-search">
+			<button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#categoryAddModal">
+				<i class="fa fa-plus"></i> 添加类别
+			</button>
+		</li>
+		{{ range .categories }}
+			<li>
+				<a href="/categories/view/{{ .ID }}">
+					<i class="fa fa-folder fa-fw"></i> {{ .Name }}
+				</a>
+			</li>
+		{{ end }}
+	</ul>
+{{ end }}
+
+{{ define "breadcrumb" }}{{ end }}
+
+{{ define "content" }}
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="page-header">首页</h1>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title primary"><i class="fa fa-desktop"></i> 服务器信息</h3>
+				</div>
+				<div class="panel-body view-body">
+					<div class="body-section">
+						<h5 class="section-heading"><i class="fa fa-hand-o-right"></i> 操作系统</h5>
+						<p class="section-content"><code>{{ .os }}</code></p>
+					</div>
+					<div class="body-section">
+						<h5 class="section-heading"><i class="fa fa-hand-o-right"></i> CPU架构</h5>
+						<p class="section-content"><code>{{ .arch }}</code></p>
+					</div>
+					<div class="body-section">
+						<h5 class="section-heading"><i class="fa fa-hand-o-right"></i> CPU核数</h5>
+						<p class="section-content"><code>{{ .cpu }}</code></p>
+					</div>
+					<div class="body-section">
+						<h5 class="section-heading"><i class="fa fa-hand-o-right"></i> Go版本</h5>
+						<p class="section-content"><code>{{ .go }}</code></p>
+					</div>
+					<div class="body-section">
+						<h5 class="section-heading"><i class="fa fa-hand-o-right"></i> 程序版本</h5>
+						<p class="section-content"><code>v{{ .version }}</code></p>
+					</div>
+					<div class="body-section">
+						<h5 class="section-heading"><i class="fa fa-hand-o-right"></i> COPYRIGHT</h5>
+						<p class="section-content"><code>&copy; {{ .copyright }}</code></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal -->
+    <div class="modal fade" id="categoryAddModal" tabindex="-1" role="dialog" aria-labelledby="categoryAddModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title success" id="categoryAddModalLabel">
+                        <i class="fa fa-plus"></i> 添加类别
+                    </h4>
+                </div>
+                <form class="ajax_form" role="form" action="/categories/add">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label><i class="required">*</i> 类别名称</label>
+                                        <input type="text" name="name" class="form-control" placeholder="类别名称" required="required">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> 取消</button>
+                    <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> 提交</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{{ end }}
+
+{{ define "js" }}
+	<script type="text/javascript" src="/assets/js/form.js?v={{ .version }}"></script>
+{{ end }}
+
+ {{ define "index" }}
+	{{ template "main" . }}
+ {{ end }}

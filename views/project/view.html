@@ -1,0 +1,89 @@
+{{ define "css" }}{{ end }}
+
+{{ define "nav" }}
+	<ul class="nav" id="side-menu">
+		<li class="sidebar-search">
+			<a href="/docs/add/{{ .project.ID }}" class="btn btn-success btn-block" role="button">
+				<i class="fa fa-plus"></i> 添加文档
+			</a>
+		</li>
+		<li class="sidebar-search">
+			<div class="input-group custom-search-form">
+				<input type="text" class="form-control" placeholder="搜 索">
+				<span class="input-group-btn">
+					<button class="btn btn-default" type="button">
+						<i class="fa fa-search"></i>
+					</button>
+				</span>
+			</div>
+		</li>
+		<li>
+			<a href="/categories/view/{{ .project.CategoryID }}"><i class="fa fa-book fa-fw"></i> 项目列表</a>
+		</li>
+		{{ range .docs }}
+			<li>
+				<a href="/docs/view/{{ .ID }}">
+					<i class="fa fa-file fa-fw"></i> {{ .Title }}
+				</a>
+			</li>
+		{{ end }}
+	</ul>
+{{ end }}
+
+{{ define "breadcrumb" }}
+	<div class="row">
+		<div class="col-lg-12">
+			<ol class="breadcrumb">
+				<li><a href="/"><i class="fa fa-home"></i> 首页</a></li>
+				<li><a href="/categories/view/{{ .project.CategoryID }}"><i class="fa fa-folder"></i> {{ .project.CategoryName }}</a></li>
+				<li class="active"><i class="fa fa-book"></i> {{ .project.Name }}</li>
+			</ol>
+		</div>
+	</div>
+{{ end }}
+
+{{ define "content" }}
+	<div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header margin-top-20">
+                <i class="fa fa-book"></i> {{ .project.Name }}
+                <div class="opt-wrap">
+                    <a href="/projects/edit/{{ .project.ID }}" class="btn btn-xs btn-primary"><i class="fa fa-edit"></i> 编辑</a>
+                    <button class="btn btn-xs btn-danger delete" data-url="/projects/delete/{{ .project.ID }}" data-msg="删除项目，会同时删除其下所有文档，确定删除吗？"><i class="fa fa-trash-o"></i> 删除</button>
+                </div>
+            </h1>
+        </div>
+    </div>
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="panel panel-default">
+				<div class="panel-body view-body">
+					<div class="body-section">
+						<h5 class="section-heading"><i class="fa fa-hand-o-right"></i> 项目名称</h5>
+						<p class="section-content"><code>{{ .project.Name }}</code></p>
+					</div>
+					<div class="body-section">
+						<h5 class="section-heading"><i class="fa fa-hand-o-right"></i> 项目简介</h5>
+						<p class="section-content"><code>{{ .project.Description }}</code></p>
+					</div>
+					<div class="body-section">
+						<h5 class="section-heading"><i class="fa fa-hand-o-right"></i> 添加时间</h5>
+						<p class="section-content"><code>{{ .project.CreatedAt.Format "2006-01-02 15:04:05" }}</code></p>
+					</div>
+					<div class="body-section">
+						<h5 class="section-heading"><i class="fa fa-hand-o-right"></i> 更新时间</h5>
+						<p class="section-content"><code>{{ .project.UpdatedAt.Format "2006-01-02 15:04:05" }}</code></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{{ end }}
+
+{{ define "js" }}
+    <script type="text/javascript" src="/assets/js/app.js?v={{ .version }}"></script>
+{{ end }}
+
+ {{ define "view" }}
+	{{ template "main" . }}
+ {{ end }}

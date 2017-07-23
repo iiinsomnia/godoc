@@ -1,0 +1,8 @@
+.captcha {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 120px !important;
+    border-left: 1px solid #ccc;
+    cursor: pointer;
+}

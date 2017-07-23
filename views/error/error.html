@@ -1,0 +1,29 @@
+{{ define "css" }}{{ end }}
+
+{{ define "body_class" }}
+	error-page
+{{ end }}
+
+{{ define "content" }}
+<div class="content">
+        <div class="row">
+            <div class="col-sm-12">
+                <h1 class="title">{{ .code }}</h1>
+            </div>
+            <div class="col-sm-12">
+                <p class="message">{{ .msg }}</p>
+            </div>
+            <div class="col-sm-12">
+                <p>
+                    <a href="javascript:window.history.back()" class="btn btn-blue btn-lg"><i class="fa fa-arrow-left"></i> 返回</a>
+                </p>
+            </div>
+        </div>
+    </div>
+{{ end }}
+
+{{ define "js" }}{{ end }}
+
+{{ define "error" }}
+	{{ template "normal" . }}
+{{ end }}

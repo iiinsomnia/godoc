@@ -1,0 +1,45 @@
+{{ define "normal" }}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SB Admin 2 - Bootstrap Admin Theme</title>
+
+    <link type="text/css" href="/assets/vendor/bootstrap/css/bootstrap.min.css?v={{ .version }}" rel="stylesheet">
+    <link type="text/css" href="/assets/vendor/metisMenu/metisMenu.min.css?v={{ .version }}" rel="stylesheet">
+    <link type="text/css" href="/assets/vendor/font-awesome/css/font-awesome.min.css?v={{ .version }}" rel="stylesheet">
+    <link type="text/css" href="/assets/vendor/pace/themes/loading-bar.css?v={{ .version }}" rel="stylesheet">
+    <link type="text/css" href="/assets/vendor/toastr/toastr.min.css?v={{ .version }}" rel="stylesheet">
+	<link type="text/css" href="/assets/vendor/sbadmin/sbadmin2.min.css?v={{ .version }}" rel="stylesheet">
+	{{ template "css" . }}
+</head>
+<body>
+    <div class="container">
+        {{ template "content" . }}
+    </div>
+
+    <script type="text/javascript">
+		window.paceOptions = {
+			ajax: {
+				trackMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+			},
+			restartOnRequestAfter: 0
+		}
+	</script>
+
+    <script type="text/javascript" src="/assets/vendor/jquery.min.js?v={{ .version }}"></script>
+    <script type="text/javascript" src="/assets/vendor/bootstrap/js/bootstrap.min.js?v={{ .version }}"></script>
+    <script type="text/javascript" src="/assets/vendor/metisMenu/metisMenu.min.js?v={{ .version }}"></script>
+	<script type="text/javascript" src="/assets/vendor/pace/pace.min.js?v={{ .version }}"></script>
+    <script type="text/javascript" src="/assets/vendor/toastr/toastr.min.js?v={{ .version }}"></script>
+    <script type="text/javascript" src="/assets/vendor/sbadmin/sbadmin2.min.js?v={{ .version }}"></script>
+	{{ template "js" . }}
+</body>
+</html>
+{{ end }}
