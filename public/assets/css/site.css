@@ -102,9 +102,21 @@ i.required{
     background-color: #449d44 !important;
     border-color: #398439 !important;
 }
+.nav>li>a {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 .markdown-body {
     font-family: PingFang SC, Helvetica, Luxi Sans, DejaVu Sans, Tahoma, Hiragino Sans GB, STHeiti, Microsoft YaHei, Arial, sans-serif;
 }
 .markdown-body pre {
     font-family: Menlo, Monaco, Consolas, Courier, monospace
+}
+.history-wrap {
+    max-height: 402px;
+    overflow-y: scroll;
+}
+.tagsinput {
+    overflow: hidden !important;
 }

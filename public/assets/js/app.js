@@ -1,5 +1,15 @@
 ;(function () {
     var $body = $('body');
+    var $tagsInputs = $('.tags-input');
+
+    if ($tagsInputs.length > 0) {
+        $tagsInputs.tagsInput({
+            width: 'auto',
+            height: '42px',
+            defaultText: '添加',
+            placeholderColor: '#b5b5b5'
+        });
+    }
 
     $body.on('click', '.reset', function(e) {
         var _this = $(this);

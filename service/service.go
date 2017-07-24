@@ -1,21 +1,21 @@
 package service
 
 import (
-	"godoc/rbac"
 	"crypto/md5"
 	"fmt"
+	"godoc/rbac"
 
 	"github.com/gin-gonic/gin"
 )
 
 type service struct {
-	User *rbac.Identity
+	Identity *rbac.Identity
 }
 
 // 构造函数
 func construct(c *gin.Context) *service {
 	return &service{
-		User: rbac.GetIdentity(c),
+		Identity: rbac.GetIdentity(c),
 	}
 }
 

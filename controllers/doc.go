@@ -3,7 +3,9 @@ package controllers
 import (
 	"fmt"
 	"godoc/i18n"
+	"godoc/params"
 	"godoc/service"
+	"html/template"
 	"strconv"
 	"strings"
 
@@ -49,9 +51,15 @@ func (d *DocController) View(c *gin.Context) {
 
 	docs, _ := docService.GetDocs(doc.ProjectID)
 
-	d.render(c, "view", gin.H{
-		"doc":  doc,
-		"docs": docs,
+	historyService := service.NewHistoryService(c)
+	history, _ := historyService.GetHistory(_id)
+
+	d.addFuncs(template.FuncMap{
+		"getHistoryFlag": params.GetHistoryFlag,
+	}).render(c, "view", gin.H{
+		"doc":     doc,
+		"docs":    docs,
+		"history": history,
 	})
 }
 
@@ -102,8 +110,13 @@ func (d *DocController) Add(c *gin.Context) {
 		"markdown":    form.Markdown,
 	}
 
+	history := yiigo.X{
+		"category_id": project.CategoryID,
+		"project_id":  project.ID,
+	}
+
 	docService := service.NewDocService(c)
-	id, err := docService.Add(data)
+	id, err := docService.Add(data, history)
 
 	if err != nil {
 		d.json(c, false, "添加失败")

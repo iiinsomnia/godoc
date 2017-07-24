@@ -34,8 +34,8 @@ func NewDocService(c *gin.Context) *DocService {
 func (d *DocService) GetDocs(projectID int) ([]Doc, error) {
 	data := []Doc{}
 
-	apiDao := mysql.NewDocDao()
-	err := apiDao.GetByProjectID(projectID, &data)
+	docDao := mysql.NewDocDao()
+	err := docDao.GetByProjectID(projectID, &data)
 
 	return data, err
 }
@@ -43,29 +43,61 @@ func (d *DocService) GetDocs(projectID int) ([]Doc, error) {
 func (d *DocService) GetDetail(id int) (*Doc, error) {
 	data := &Doc{}
 
-	apiDao := mysql.NewDocDao()
-	err := apiDao.GetByID(id, data)
+	docDao := mysql.NewDocDao()
+	err := docDao.GetByID(id, data)
 
 	return data, err
 }
 
-func (d *DocService) Add(data yiigo.X) (int64, error) {
-	apiDao := mysql.NewDocDao()
-	id, err := apiDao.AddNewRecord(data)
+func (d *DocService) Add(data yiigo.X, history yiigo.X) (int64, error) {
+	docDao := mysql.NewDocDao()
+	id, err := docDao.AddNewRecord(data)
+
+	if err == nil {
+		historyDao := mysql.NewHistoryDao()
+
+		history["user_id"] = d.Identity.ID
+		history["doc_id"] = id
+		history["flag"] = 1
+
+		historyDao.AddNewRecord(history)
+	}
 
 	return id, err
 }
 
 func (d *DocService) Edit(id int, data yiigo.X) error {
-	apiDao := mysql.NewDocDao()
-	err := apiDao.UpdateByID(id, data)
+	docDao := mysql.NewDocDao()
+
+	doc := &Doc{}
+	err := docDao.GetByID(id, doc)
+
+	if err != nil {
+		return err
+	}
+
+	err = docDao.UpdateByID(id, data)
+
+	if err == nil {
+		historyDao := mysql.NewHistoryDao()
+
+		history := yiigo.X{
+			"user_id":     d.Identity.ID,
+			"category_id": doc.CategoryID,
+			"project_id":  doc.ProjectID,
+			"doc_id":      id,
+			"flag":        2,
+		}
+
+		historyDao.AddNewRecord(history)
+	}
 
 	return err
 }
 
 func (d *DocService) Delete(id int) error {
-	apiDao := mysql.NewDocDao()
-	err := apiDao.DeleteByID(id)
+	docDao := mysql.NewDocDao()
+	err := docDao.DeleteByID(id)
 
 	return err
 }

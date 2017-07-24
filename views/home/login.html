@@ -22,7 +22,7 @@
 							<input type="text" name="captcha" class="form-control" placeholder="验证码" required="required">
 							<img src="/captcha/{{ .captchaID }}" class="captcha" title="看不清？点击换一张" alt="" onclick="this.src='/captcha/{{ .captchaID }}?r='+Math.random()">
 						</div>
-						<button type="submit" class="btn btn-lg btn-success btn-block">Login</button>
+						<button type="submit" class="btn btn-lg btn-success btn-block"><i class="fa fa-key"></i> Login</button>
 					</fieldset>
 				</form>
 			</div>

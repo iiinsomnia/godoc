@@ -1,6 +1,9 @@
 {{ define "css" }}
     <link rel="stylesheet" type="text/css" href="/assets/vendor/editor.md/css/editormd.min.css?v={{ .version }}"/>
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/jqueryTagsInput/jquery.tagsinput.min.css?v={{ .version }}"/>
 {{ end }}
+
+{{ define "dropdown" }}{{ end }}
 
 {{ define "nav" }}
 	<ul class="nav" id="side-menu">
@@ -62,7 +65,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>文档标签</label>
-                                    <input type="text" name="label" class="form-control" placeholder="文档标签">
+                                    <input type="text" name="label" class="form-control tags-input" placeholder="文档标签">
                                 </div>
                                 <div class="form-group">
                                     <label><i class="required">*</i> 文档内容</label>
@@ -88,8 +91,10 @@
 
 {{ define "js" }}
     <script type="text/javascript" src="/assets/vendor/editor.md/editormd.min.js?v={{ .version }}"></script>
+    <script type="text/javascript" src="/assets/vendor/jqueryTagsInput/jquery.tagsinput.min.js?v={{ .version }}"></script>
     <script type="text/javascript" src="/assets/js/markdown.js?v={{ .version }}"></script>
     <script type="text/javascript" src="/assets/js/form.js?v={{ .version }}"></script>
+    <script type="text/javascript" src="/assets/js/app.js?v={{ .version }}"></script>
 {{ end }}
 
  {{ define "add" }}

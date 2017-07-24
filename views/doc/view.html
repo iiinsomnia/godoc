@@ -2,6 +2,31 @@
     <link rel="stylesheet" type="text/css" href="/assets/vendor/editor.md/css/editormd.preview.min.css?v={{ .version }}"/>
 {{ end }}
 
+{{ define "dropdown" }}
+	<li class="dropdown">
+		<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+			<i class="fa fa-history fa-fw"></i> <i class="fa fa-caret-down"></i>
+		</a>
+		<ul class="dropdown-menu dropdown-alerts history-wrap">
+			{{ range .history }}
+				<li>
+					<a href="#">
+						<div>
+							<i class="fa fa-clock-o fa-fw"></i> {{ .UserName }}
+							<span class="pull-right text-muted small">
+								{{ .Flag | getHistoryFlag }}于 {{ .CreatedAt.Format "2006-01-02 15:04:05" }}
+							</span>
+						</div>
+					</a>
+				</li>
+				{{ if eq .Flag 2 }}
+					<li class="divider"></li>
+				{{ end }}
+			{{ end }}
+		</ul>
+	</li>
+{{ end }}
+
 {{ define "nav" }}
 	<ul class="nav" id="side-menu">
 		<li class="sidebar-search">
