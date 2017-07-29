@@ -33,13 +33,13 @@
 {{ define "content" }}
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header margin-top-20">
+            <h3 class="page-header margin-top-20">
                 {{ .category.Name }}
                 <div class="opt-wrap">
                     <button class="btn btn-xs btn-primary" data-toggle="modal" data-target="#categoryEditModal"><i class="fa fa-edit"></i> 编辑</button>
                     <button class="btn btn-xs btn-danger delete" data-url="/categories/delete/{{ .category.ID }}" data-msg="删除类别，会同时删除其下所有项目和文档，确定删除吗？"><i class="fa fa-trash-o"></i> 删除</button>
                 </div>
-            </h1>
+            </h3>
         </div>
     </div>
     <div class="row">

@@ -20,15 +20,20 @@
 			</div>
 		</li>
 		<li>
-			<a href="/categories/view/{{ .project.CategoryID }}"><b><i class="fa fa-book fa-fw"></i> 项目管理</b></a>
+			<a href="/categories/view/{{ .project.CategoryID }}"><b><i class="fa fa-folder fa-fw"></i> {{ .project.CategoryName }}</b></a>
 		</li>
-		{{ range .docs }}
-			<li>
-				<a href="/docs/view/{{ .ID }}">
-					<i class="fa fa-file fa-fw"></i> {{ .Title }}
-				</a>
-			</li>
-		{{ end }}
+		<li>
+			<a href="#" class="active"><i class="fa fa-book fa-fw"></i> {{ .project.Name }}<span class="fa arrow"></span></a>
+			<ul class="nav nav-second-level collapse in" aria-expanded="true">
+				{{ range .docs }}
+					<li>
+						<a href="/docs/view/{{ .ID }}">
+							<i class="fa fa-file fa-fw"></i> {{ .Title }}
+						</a>
+					</li>
+				{{ end }}
+			</ul>
+		</li>
 	</ul>
 {{ end }}
 
@@ -47,13 +52,13 @@
 {{ define "content" }}
 	<div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header margin-top-20">
+            <h3 class="page-header margin-top-20">
                 <i class="fa fa-book"></i> {{ .project.Name }}
                 <div class="opt-wrap">
                     <a href="/projects/edit/{{ .project.ID }}" class="btn btn-xs btn-primary"><i class="fa fa-edit"></i> 编辑</a>
                     <button class="btn btn-xs btn-danger delete" data-url="/projects/delete/{{ .project.ID }}" data-msg="删除项目，会同时删除其下所有文档，确定删除吗？"><i class="fa fa-trash-o"></i> 删除</button>
                 </div>
-            </h1>
+            </h3>
         </div>
     </div>
 	<div class="row">

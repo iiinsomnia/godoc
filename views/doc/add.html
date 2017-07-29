@@ -23,15 +23,20 @@
 			</div>
 		</li>
 		<li>
-			<a href="/categories/view/{{ .project.CategoryID }}"><b><i class="fa fa-book fa-fw"></i> 项目管理</b></a>
+			<a href="/categories/view/{{ .project.CategoryID }}"><b><i class="fa fa-folder fa-fw"></i> {{ .project.CategoryName }}</b></a>
+        </li>
+        <li>
+			<a href="#" class="active"><i class="fa fa-book fa-fw"></i> {{ .project.Name }}<span class="fa arrow"></span></a>
+			<ul class="nav nav-second-level collapse in" aria-expanded="true">
+				{{ range .docs }}
+					<li>
+						<a href="/docs/view/{{ .ID }}">
+							<i class="fa fa-file fa-fw"></i> {{ .Title }}
+						</a>
+					</li>
+				{{ end }}
+			</ul>
 		</li>
-		{{ range .docs }}
-			<li>
-				<a href="/docs/view/{{ .ID }}">
-					<i class="fa fa-file fa-fw"></i> {{ .Title }}
-				</a>
-			</li>
-		{{ end }}
 	</ul>
 {{ end }}
 

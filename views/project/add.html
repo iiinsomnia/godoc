@@ -12,7 +12,7 @@
         {{ range .categories }}
             <li>
                 <a href="/categories/view/{{ .ID }}" {{ if eq $.category.ID .ID }}class="active"{{ end }}>
-                    <i class="fa fa-folder fa-fw"></i> {{ .Name }}
+                    <i class="fa fa-folder{{ if eq $.category.ID .ID }}-open{{ end }} fa-fw"></i> {{ .Name }}
                 </a>
             </li>
         {{ end }}
