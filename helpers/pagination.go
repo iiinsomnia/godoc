@@ -52,7 +52,7 @@ func Pagination(curPage int, totalPage int, showPages ...int) []int {
 
 func HttpBuildQueryUrl(uri string, query url.Values, page ...int) string {
 	if len(page) > 0 {
-		query.Add("page", strconv.Itoa(page[0]))
+		query.Set("page", strconv.Itoa(page[0]))
 	}
 
 	if len(query) == 0 {

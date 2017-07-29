@@ -19,11 +19,11 @@ func NewUserDao() *UserDao {
 	}
 }
 
-func (u *UserDao) GetByPagination(query url.Values, limit int, offset int, data interface{}) (int, error) {
+func (u *UserDao) GetByPagination(params url.Values, limit int, offset int, data interface{}) (int, error) {
 	where := []string{}
 	binds := []interface{}{}
 
-	for k, v := range query {
+	for k, v := range params {
 		switch k {
 		case "name":
 			where = append(where, "name = ?")
@@ -37,35 +37,39 @@ func (u *UserDao) GetByPagination(query url.Values, limit int, offset int, data 
 		}
 	}
 
-	err := u.MySQL.Find(yiigo.X{
-		"select": "id, name, email, role, last_login_ip, last_login_time, created_at, updated_at",
-		"where":  strings.Join(where, " AND "),
-		"binds":  binds,
-		"limit":  limit,
-		"offset": offset,
-	}, data)
+	query := yiigo.X{}
+
+	if len(where) > 0 {
+		query["where"] = strings.Join(where, " AND ")
+		query["binds"] = binds
+	}
+
+	count, err := u.MySQL.Count(query)
 
 	if err != nil {
 		yiigo.LogError(err.Error())
 		return 0, err
 	}
 
-	count, err := u.MySQL.Count(yiigo.X{
-		"where": strings.Join(where, " AND "),
-		"binds": binds,
-	})
+	query["select"] = "id, name, email, role, last_login_ip, last_login_time, created_at, updated_at"
+	query["limit"] = limit
+	query["offset"] = offset
+
+	err = u.MySQL.Find(query, data)
 
 	if err != nil {
 		yiigo.LogError(err.Error())
+		return 0, err
 	}
 
 	return count, nil
 }
 
-func (u *UserDao) GetById(id int, data interface{}) error {
+func (u *UserDao) GetByID(id int, data interface{}) error {
 	query := yiigo.X{
-		"where": "id = ?",
-		"binds": []interface{}{id},
+		"select": "id, name, email, role, last_login_ip, last_login_time, created_at, updated_at",
+		"where":  "id = ?",
+		"binds":  []interface{}{id},
 	}
 
 	err := u.MySQL.FindOne(query, data)
@@ -112,7 +116,7 @@ func (u *UserDao) AddNewRecord(data yiigo.X) (int64, error) {
 	return id, nil
 }
 
-func (u *UserDao) UpdateById(id int, data yiigo.X) error {
+func (u *UserDao) UpdateByID(id int, data yiigo.X) error {
 	query := yiigo.X{
 		"where": "id = ?",
 		"binds": []interface{}{id},
@@ -128,7 +132,7 @@ func (u *UserDao) UpdateById(id int, data yiigo.X) error {
 	return nil
 }
 
-func (u *UserDao) DeleteById(id int) error {
+func (u *UserDao) DeleteByID(id int) error {
 	query := yiigo.X{
 		"where": "id = ?",
 		"binds": []interface{}{id},

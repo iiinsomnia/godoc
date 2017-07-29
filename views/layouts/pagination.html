@@ -1,0 +1,23 @@
+{{ define "pagination" }}
+    {{ if gt .totalPage 1 }}
+        <div class="panel-footer align-center">
+            <ul class="pagination">
+                {{ if eq .pagination.curPage 1 }}
+                    <li class="disabled"><a href="javascript:void(0);"><i class="fa fa-angle-double-left"></i></a></li>
+                {{ else }}
+                    <li><a href="{{ httpBuildQueryUrl .pagination.uri .query 1 }}"><i class="fa fa-angle-double-left"></i></a></a></li>
+                {{ end }}
+
+                {{ range .pagination.pages }}
+                    <li {{ if eq $.pagination.curPage . }} class="active" {{ end }}><a href="{{ httpBuildQueryUrl $.pagination.uri $.query . }}">{{ . }}</a></li>
+                {{ end }}
+
+                {{ if eq .pagination.curPage .pagination.lastPage }}
+                    <li class="disabled"><a href="javascript:void(0);"><i class="fa fa-angle-double-right"></i></a></a></li>
+                {{ else }}
+                    <li><a href="{{ httpBuildQueryUrl .pagination.uri .query .pagination.lastPage }}"><i class="fa fa-angle-double-right"></i></a></a></li>
+                {{ end }}
+            </ul>
+        </div>
+    {{ end }}
+{{ end }}

@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"fmt"
-	"godoc/params"
+	"godoc/helpers"
 	"godoc/rbac"
 	"godoc/views"
 	"html/template"
@@ -30,6 +30,7 @@ type view struct {
 type html struct {
 	funcs  template.FuncMap
 	layout string
+	extra  []string
 }
 
 // 构造函数
@@ -41,15 +42,15 @@ func construct(r *gin.Engine, layout string, tplDir string) *controller {
 		view: &view{
 			deft: &html{
 				funcs: template.FuncMap{
-					"getRoleName": params.GetRoleName,
-					"date":        views.Date,
+					"getRoleName": rbac.GetRoleName,
+					"date":        helpers.Date,
 				},
 				layout: layout,
 			},
 			curr: &html{
 				funcs: template.FuncMap{
-					"getRoleName": params.GetRoleName,
-					"date":        views.Date,
+					"getRoleName": rbac.GetRoleName,
+					"date":        helpers.Date,
 				},
 				layout: layout,
 			},
@@ -73,6 +74,20 @@ func (c *controller) addFuncs(funcs template.FuncMap) *controller {
 	return c
 }
 
+// eg: "layouts/pagination"
+func (c *controller) addTpls(tpls ...string) *controller {
+	extra := []string{}
+
+	for _, v := range tpls {
+		tpl := fmt.Sprintf("%s.%s", v, c.view.ext)
+		extra = append(extra, tpl)
+	}
+
+	c.view.curr.extra = extra
+
+	return c
+}
+
 func (c *controller) layout(layout string) *controller {
 	c.view.curr.layout = layout
 
@@ -84,10 +99,16 @@ func (c *controller) render(ctx *gin.Context, tpl string, args ...gin.H) {
 
 	viewFiles := []string{}
 
+	// 布局模板
 	layoutFile := fmt.Sprintf("layouts/%s.%s", c.view.curr.layout, c.view.ext)
-	tplFile := fmt.Sprintf("%s/%s.%s", c.view.dir, tpl, c.view.ext)
+	viewFiles = append(viewFiles, layoutFile)
 
-	viewFiles = append(viewFiles, layoutFile, tplFile)
+	// 额外模板
+	viewFiles = append(viewFiles, c.view.curr.extra...)
+
+	// 当前模板
+	tplFile := fmt.Sprintf("%s/%s.%s", c.view.dir, tpl, c.view.ext)
+	viewFiles = append(viewFiles, tplFile)
 
 	viewStrings := []string{}
 
@@ -165,6 +186,7 @@ func (c *controller) json(ctx *gin.Context, success bool, msg interface{}, resp 
 func (c *controller) recover(ctx *gin.Context) {
 	c.view.curr.funcs = c.view.deft.funcs
 	c.view.curr.layout = c.view.deft.layout
+	c.view.curr.extra = c.view.deft.extra
 
 	if err := recover(); err != nil {
 		yiigo.LogErrorf("%s", err)

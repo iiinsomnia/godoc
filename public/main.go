@@ -34,6 +34,7 @@ func loadStaticResource() {
 // load routes
 func loadRoutes(r *gin.Engine) {
 	routes.LoadHomeRoutes(r)
+	routes.LoadUserRoutes(r)
 	routes.LoadCategoryRoutes(r)
 	routes.LoadProjectRoutes(r)
 	routes.LoadDocRoutes(r)
@@ -64,7 +65,6 @@ func run() {
 
 	r := gin.New()
 
-	// r.Static("/assets", "./assets")
 	r.StaticFS("/assets", assets.Asset.HTTPBox())
 	r.StaticFile("/favicon.ico", "./favicon.ico")
 	// r.LoadHTMLGlob("../views/**/**/*")

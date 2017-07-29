@@ -1,14 +1,22 @@
 package rbac
 
 import (
+	"encoding/json"
 	"godoc/dao/mysql"
 	"godoc/session"
-	"encoding/json"
+	"math/rand"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/iiinsomnia/yiigo"
 )
+
+var Roles = map[int]string{
+	1: "普通用户",
+	2: "高级用户",
+	3: "超级用户",
+}
 
 type Identity struct {
 	ID            int       `db:"id" json:"id"`
@@ -19,6 +27,15 @@ type Identity struct {
 	Role          int       `db:"role" json:"role"`
 	LastLoginIP   string    `db:"last_login_ip" json:"last_login_ip"`
 	LastLoginTime time.Time `db:"last_login_time" json:"last_login_time"`
+}
+
+// GetRoleName 获取角色名称
+func GetRoleName(role int) string {
+	if v, ok := Roles[role]; ok {
+		return v
+	}
+
+	return ""
 }
 
 // GetIdentity 获取用户登录信息
@@ -55,7 +72,7 @@ func SignIn(c *gin.Context, identity *Identity, duration ...int) bool {
 	loginTime := time.Now()
 
 	userDao := mysql.NewUserDao()
-	userDao.UpdateById(identity.ID, yiigo.X{
+	userDao.UpdateByID(identity.ID, yiigo.X{
 		"last_login_ip":   loginIP,
 		"last_login_time": loginTime,
 	})
@@ -78,4 +95,20 @@ func SignIn(c *gin.Context, identity *Identity, duration ...int) bool {
 	}
 
 	return true
+}
+
+// GenerateSalt 生成随机加密盐
+func GenerateSalt() string {
+	salt := []string{}
+	pattern := "abcdef!ghijklm@nopqrst#uvwxyz$12345%67890^ABCDEFGH&IJKLMNOP*QRSTUVWXYZ"
+
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	length := len(pattern)
+
+	for i := 0; i < 16; i++ {
+		n := r.Intn(length)
+		salt = append(salt, pattern[n:n+1])
+	}
+
+	return strings.Join(salt, "")
 }

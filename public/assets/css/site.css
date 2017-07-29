@@ -10,7 +10,6 @@ table th, table td {
 }
 ul {
     list-style: none;
-    margin: 0;
 }
 select {
     font-size: 14px;
@@ -75,6 +74,9 @@ i.required{
 .margin-top-20 {
     margin-top: 20px;
 }
+.navbar-top-links {
+    height: 50px;
+}
 /* other */
 .breadcrumb {
     margin-top: 20px;
@@ -119,4 +121,16 @@ i.required{
 }
 .tagsinput {
     overflow: hidden !important;
+}
+.list-panel .panel-body {
+    padding: 0;
+}
+.list-panel .panel-body .table {
+    margin: 0;
+}
+.list-panel .panel-footer {
+    height: 55px;
+}
+.pagination {
+    margin: 0;
 }

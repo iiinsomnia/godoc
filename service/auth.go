@@ -1,8 +1,9 @@
 package service
 
 import (
-	"godoc/dao/mysql"
 	"errors"
+	"godoc/dao/mysql"
+	"godoc/helpers"
 
 	"godoc/rbac"
 
@@ -34,7 +35,7 @@ func (a *AuthService) Login(c *gin.Context, account string, password string) err
 		return errors.New("登录失败")
 	}
 
-	if a.md5(password+identity.Salt) != identity.Password {
+	if helpers.MD5(password+identity.Salt) != identity.Password {
 		return errors.New("帐号或密码错误")
 	}
 

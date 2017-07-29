@@ -9,9 +9,6 @@
                 <i class="fa fa-plus"></i> 添加类别
             </button>
         </li>
-        <li>
-            <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
-        </li>
         {{ range .categories }}
             <li>
                 <a href="/categories/view/{{ .ID }}" {{ if eq $.category.ID .ID }} class="active" {{ end }}>
