@@ -83,6 +83,20 @@ func (u *UserController) Add(c *gin.Context) {
 		return
 	}
 
+	userService := service.NewUserService(c)
+
+	unique, err := userService.CheckUnique(form.Name, form.Email)
+
+	if err != nil {
+		u.json(c, false, "添加失败")
+		return
+	}
+
+	if !unique {
+		u.json(c, false, "用户名或邮箱已被注册")
+		return
+	}
+
 	defaultPass := yiigo.GetEnvString("app", "defaultPass", "123")
 	salt := rbac.GenerateSalt()
 
@@ -94,8 +108,7 @@ func (u *UserController) Add(c *gin.Context) {
 		"salt":     salt,
 	}
 
-	userService := service.NewUserService(c)
-	_, err := userService.Add(data)
+	_, err = userService.Add(data)
 
 	if err != nil {
 		u.json(c, false, "添加失败")
@@ -142,13 +155,25 @@ func (u *UserController) Edit(c *gin.Context) {
 		return
 	}
 
+	unique, err := userService.CheckUnique(form.Name, form.Email, _id)
+
+	if err != nil {
+		u.json(c, false, "添加失败")
+		return
+	}
+
+	if !unique {
+		u.json(c, false, "用户名或邮箱已被使用")
+		return
+	}
+
 	data := yiigo.X{
 		"name":  form.Name,
 		"email": form.Email,
 		"role":  form.Role,
 	}
 
-	err := userService.Edit(_id, data)
+	err = userService.Edit(_id, data)
 
 	if err != nil {
 		u.json(c, false, "编辑失败")

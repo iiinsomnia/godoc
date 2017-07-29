@@ -30,7 +30,7 @@
 {{ define "nav" }}
 	<ul class="nav" id="side-menu">
 		<li class="sidebar-search">
-			<a href="/docs/add/{{ .doc.CategoryID }}" class="btn btn-success btn-block" role="button">
+			<a href="/docs/add/{{ .doc.ProjectID }}" class="btn btn-success btn-block" role="button">
 				<i class="fa fa-plus"></i> 添加文档
 			</a>
 		</li>
@@ -45,11 +45,11 @@
 			</div>
 		</li>
 		<li>
-			<a href="/categories/view/{{ .doc.CategoryID }}"><i class="fa fa-book fa-fw"></i> 项目列表</a>
+			<a href="/categories/view/{{ .doc.CategoryID }}"><b><i class="fa fa-book fa-fw"></i> 项目管理</b></a>
 		</li>
 		{{ range .docs }}
 			<li>
-				<a href="/docs/view/{{ .ID }}" {{ if eq $.doc.ID .ID }} class="active" {{ end }}>
+				<a href="/docs/view/{{ .ID }}" {{ if eq $.doc.ID .ID }}class="active"{{ end }}>
 					<i class="fa fa-file fa-fw"></i> {{ .Title }}
 				</a>
 			</li>

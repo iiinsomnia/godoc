@@ -85,6 +85,31 @@ func (u *UserDao) GetByID(id int, data interface{}) error {
 	return nil
 }
 
+func (u *UserDao) GetByNameOrEmail(name string, email string, data interface{}, id ...int) error {
+	query := yiigo.X{
+		"select": "id, name, email, role, last_login_ip, last_login_time, created_at, updated_at",
+		"where":  "name = ? OR email = ?",
+		"binds":  []interface{}{name, email},
+	}
+
+	if len(id) > 0 {
+		query["where"] = "id <> ? AND (name = ? OR email = ?)"
+		query["binds"] = []interface{}{id[0], name, email}
+	}
+
+	err := u.MySQL.FindOne(query, data)
+
+	if err != nil {
+		if err.Error() != "not found" {
+			yiigo.LogError(err.Error())
+		}
+
+		return err
+	}
+
+	return nil
+}
+
 func (u *UserDao) GetByAccount(account string, data interface{}) error {
 	query := yiigo.X{
 		"select": "id, name, email, password, salt, role, last_login_ip, last_login_time",

@@ -6,7 +6,7 @@
 	<ul class="nav" id="side-menu">
         <li class="sidebar-search">
 			<a href="/users/add" class="btn btn-success btn-block" role="button">
-				<i class="fa fa-plus"></i> 添加用户
+				<i class="fa fa-user-plus"></i> 添加用户
 			</a>
 		</li>
 		<li>
@@ -71,8 +71,9 @@
                                             <td>{{ .CreatedAt.Format "2006-01-02 15:04:05" }}</td>
                                             <td>{{ .UpdatedAt.Format "2006-01-02 15:04:05" }}</td>
                                             <td>
-                                                <a href="#" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i></a>
-                                                <button type="button" class="btn btn-danger btn-xs delete" data-url="users/delete/{{ .ID }}"><i class="fa fa-trash-o"></i></button>
+                                                <a href="/users/edit/{{ .ID }}" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i> 编辑</a>
+                                                <button type="button" class="btn btn-warning btn-xs reset" data-url="/users/reset/{{ .ID }}"><i class="fa fa-undo"></i> 重置密码</button>
+                                                <button type="button" class="btn btn-danger btn-xs delete" data-url="/users/delete/{{ .ID }}"><i class="fa fa-trash-o"></i> 删除</button>
                                             </td>
                                         </tr>
                                     {{ end }}

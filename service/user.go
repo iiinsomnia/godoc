@@ -91,3 +91,20 @@ func (u *UserService) Delete(id int) error {
 
 	return err
 }
+
+func (u *UserService) CheckUnique(name string, email string, id ...int) (bool, error) {
+	data := &User{}
+
+	userDao := mysql.NewUserDao()
+	err := userDao.GetByNameOrEmail(name, email, data, id...)
+
+	if err != nil {
+		if err.Error() == "not found" {
+			return true, nil
+		}
+
+		return false, err
+	}
+
+	return false, nil
+}

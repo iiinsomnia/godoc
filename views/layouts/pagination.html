@@ -9,7 +9,7 @@
                 {{ end }}
 
                 {{ range .pagination.pages }}
-                    <li {{ if eq $.pagination.curPage . }} class="active" {{ end }}><a href="{{ httpBuildQueryUrl $.pagination.uri $.query . }}">{{ . }}</a></li>
+                    <li {{ if eq $.pagination.curPage . }}class="active"{{ end }}><a href="{{ httpBuildQueryUrl $.pagination.uri $.query . }}">{{ . }}</a></li>
                 {{ end }}
 
                 {{ if eq .pagination.curPage .pagination.lastPage }}

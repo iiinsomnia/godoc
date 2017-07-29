@@ -16,7 +16,10 @@ func LoadUserRoutes(r *gin.Engine) {
 		g.GET("/users", userController.Index)
 		g.GET("/users/add", userController.Add)
 		g.POST("/users/add", userController.Add)
+		g.GET("/users/edit/:id", userController.Edit)
 		g.POST("/users/edit/:id", userController.Edit)
+		g.POST("/users/password", userController.Password)
+		g.GET("/users/reset/:id", userController.Reset)
 		g.GET("/users/delete/:id", userController.Delete)
 	}
 }

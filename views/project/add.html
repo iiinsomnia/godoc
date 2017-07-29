@@ -11,7 +11,7 @@
         </li>
         {{ range .categories }}
             <li>
-                <a href="/categories/view/{{ .ID }}" {{ if eq $.category.ID .ID }} class="active" {{ end }}>
+                <a href="/categories/view/{{ .ID }}" {{ if eq $.category.ID .ID }}class="active"{{ end }}>
                     <i class="fa fa-folder fa-fw"></i> {{ .Name }}
                 </a>
             </li>
@@ -55,7 +55,7 @@
 
                         <div class="row">
                             <div class="col-lg-12 align-center">
-                                <button type="reset" class="btn btn-default"><i class="fa fa-undo"></i> 重置</button>
+                                <a href="/categories/view/{{ .category.ID }}" class="btn btn-default"><i class="fa fa-times"></i> 取消</a>
                                 <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> 提交</button>
                             </div>
                         </div>
@@ -67,7 +67,7 @@
 {{ end }}
 
 {{ define "js" }}
-    <script type="text/javascript" src="/assets/js/common/form.js?v={{ .version }}"></script>
+    <script type="text/javascript" src="/assets/js/form.js?v={{ .version }}"></script>
 {{ end }}
 
  {{ define "add" }}
