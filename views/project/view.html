@@ -11,7 +11,7 @@
 		</li>
 		<li class="sidebar-search">
 			<div class="input-group custom-search-form">
-				<input type="text" class="form-control" placeholder="搜 索">
+				<input type="text" id="doc_search" class="form-control" placeholder="搜 索">
 				<span class="input-group-btn">
 					<button class="btn btn-default" type="button">
 						<i class="fa fa-search"></i>
@@ -24,7 +24,7 @@
 		</li>
 		<li>
 			<a href="#" class="active"><i class="fa fa-book fa-fw"></i> {{ .project.Name }}<span class="fa arrow"></span></a>
-			<ul class="nav nav-second-level collapse in" aria-expanded="true">
+			<ul id="doc_wrap" class="nav nav-second-level collapse in" aria-expanded="true">
 				{{ range .docs }}
 					<li>
 						<a href="/docs/view/{{ .ID }}">
@@ -88,6 +88,7 @@
 {{ end }}
 
 {{ define "js" }}
+	<script type="text/javascript" src="/assets/js/jquery.quicksearch.js?v={{ .version }}"></script>
     <script type="text/javascript" src="/assets/js/app.js?v={{ .version }}"></script>
 {{ end }}
 

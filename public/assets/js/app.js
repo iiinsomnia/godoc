@@ -1,6 +1,7 @@
 ;(function () {
     var $body = $('body');
     var $tagsInputs = $('.tags-input');
+    var $docSearch = $('#doc_search');
 
     if ($tagsInputs.length > 0) {
         $tagsInputs.tagsInput({
@@ -8,6 +9,12 @@
             height: '42px',
             defaultText: '添加',
             placeholderColor: '#b5b5b5'
+        });
+    }
+
+    if ($docSearch.length > 0) {
+        $docSearch.quicksearch('#doc_wrap li', {
+            'selector': 'a'
         });
     }
 

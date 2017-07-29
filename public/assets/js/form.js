@@ -6,6 +6,7 @@
         var $btns = _this.find('button');
 
         var url = _this.attr('action');
+        var modal = _this.data('modal');
         var data = _this.serialize();
 
         $btns.attr('disabled', 'true');
@@ -13,6 +14,10 @@
         $.post(url, data, function(json) {
             if(json.success){
                 iSuccess(json.msg, function() {
+                    if (modal) {
+                        $(modal).modal('hide');
+                    }
+
                     if (json.redirect) {
                         location.href = json.redirect;
                     }
@@ -36,6 +41,7 @@
         var $btns = _this.find('button');
 
         var url = _this.attr('action');
+        var modal = _this.data('modal');
         var data = _this.serialize();
 
         $btns.attr('disabled', 'true');
@@ -43,6 +49,10 @@
         $.post(url, data, function(json) {
             if(json.success){
                 iSuccess(json.msg, function() {
+                    if (modal) {
+                        $(modal).modal('hide');
+                    }
+
                     if (json.redirect) {
                         location.href = json.redirect;
                     }

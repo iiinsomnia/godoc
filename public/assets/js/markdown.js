@@ -9,7 +9,8 @@
                 "bold", "del", "italic", "quote",  "|",
                 "h1", "h2", "h3", "h4", "h5", "h6", "|",
                 "list-ul", "list-ol", "hr", "|",
-                "table", "link", "datetime", "clear", "|",
+                "code-block", "table", "image", "link", "datetime", "|",
+                "search", "clear", "|",
                 "watch", "preview", "info"
             ]
         }

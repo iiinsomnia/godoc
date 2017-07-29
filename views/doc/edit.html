@@ -14,7 +14,7 @@
 		</li>
 		<li class="sidebar-search">
 			<div class="input-group custom-search-form">
-				<input type="text" class="form-control" placeholder="搜 索">
+				<input type="text" id="doc_search" class="form-control" placeholder="搜 索">
 				<span class="input-group-btn">
 					<button class="btn btn-default" type="button">
 						<i class="fa fa-search"></i>
@@ -27,7 +27,7 @@
         </li>
         <li>
 			<a href="#"><i class="fa fa-book fa-fw"></i> {{ .doc.ProjectName }}<span class="fa arrow"></span></a>
-			<ul class="nav nav-second-level collapse in" aria-expanded="true">
+			<ul id="doc_wrap" class="nav nav-second-level collapse in" aria-expanded="true">
 				{{ range .docs }}
 					<li>
 						<a href="/docs/view/{{ .ID }}" {{ if eq $.doc.ID .ID }}class="active"{{ end }}>
@@ -97,6 +97,7 @@
 {{ define "js" }}
     <script type="text/javascript" src="/assets/vendor/editor.md/editormd.min.js?v={{ .version }}"></script>
     <script type="text/javascript" src="/assets/vendor/jqueryTagsInput/jquery.tagsinput.min.js?v={{ .version }}"></script>
+    <script type="text/javascript" src="/assets/js/jquery.quicksearch.js?v={{ .version }}"></script>
     <script type="text/javascript" src="/assets/js/markdown.js?v={{ .version }}"></script>
     <script type="text/javascript" src="/assets/js/form.js?v={{ .version }}"></script>
     <script type="text/javascript" src="/assets/js/app.js?v={{ .version }}"></script>
