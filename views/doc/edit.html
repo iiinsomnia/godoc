@@ -32,7 +32,7 @@
         <ul id="doc_wrap" class="nav nav-second-level collapse in" aria-expanded="true">
             {{ range .docs }}
             <li>
-                <a href="/docs/view/{{ .ID }}" {{ if eq $.doc.ID .ID }}class="active"{{ end }}>
+                <a href="/docs/view/{{ .ID }}" {{ if eq $.doc.ID .ID }}class="active"{{ end }} title="{{ .Title }}">
                     <i class="fa fa-bookmark fa-fw"></i> {{ .Title }}
                 </a>
             </li>
