@@ -3,6 +3,7 @@ package controllers
 import (
 	"godoc/helpers"
 	"godoc/i18n"
+	"godoc/params"
 	"godoc/rbac"
 	"godoc/service"
 	"html/template"
@@ -46,7 +47,7 @@ func (u *UserController) Index(c *gin.Context) {
 	query := c.Request.URL.Query()
 
 	userService := service.NewUserService(c)
-	count, curPage, totalPage, data, err := userService.GetUserList(query, 1)
+	count, curPage, totalPage, data, err := userService.GetUserList(query)
 
 	if err != nil {
 		u.renderError(c, 500, "数据获取失败")
@@ -82,7 +83,9 @@ func (u *UserController) Add(c *gin.Context) {
 	}
 
 	if c.Request.Method == "GET" {
-		u.render(c, "add", gin.H{
+		u.addFuncs(template.FuncMap{
+			"roleDesc": params.RoleDesc,
+		}).render(c, "add", gin.H{
 			"defaultPass": yiigo.GetEnvString("app", "defaultPass", "123"),
 			"roles":       rbac.Roles,
 		})
@@ -161,7 +164,9 @@ func (u *UserController) Edit(c *gin.Context) {
 			return
 		}
 
-		u.render(c, "edit", gin.H{
+		u.addFuncs(template.FuncMap{
+			"roleDesc": params.RoleDesc,
+		}).render(c, "edit", gin.H{
 			"user":  user,
 			"roles": rbac.Roles,
 		})

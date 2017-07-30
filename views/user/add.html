@@ -46,7 +46,7 @@
                                 <select name="role" class="form-control" required="required">
                                     <option></option>
                                     {{ range $k, $v := .roles }}
-                                    <option value="{{ $k }}">{{ $v }}</option>
+                                    <option value="{{ $k }}">{{ $v }} - {{ $k | roleDesc }}</option>
                                     {{ end }}
                                 </select>
                             </div>

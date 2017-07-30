@@ -90,7 +90,7 @@ func (d *DocDao) DeleteByID(id int) error {
 		yiigo.X{
 			"type": "delete",
 			"query": yiigo.X{
-				"table": "log",
+				"table": "history",
 				"where": "doc_id = ?",
 				"binds": []interface{}{id},
 			},

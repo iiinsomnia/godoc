@@ -1,14 +1,29 @@
 package params
 
 func GetHistoryFlag(flag int) string {
-	flagName := ""
+	name := ""
 
 	switch flag {
 	case 1:
-		flagName = "创建"
+		name = "创建"
 	case 2:
-		flagName = "修改"
+		name = "修改"
 	}
 
-	return flagName
+	return name
+}
+
+func RoleDesc(role int) string {
+	desc := ""
+
+	switch role {
+	case 1:
+		desc = "只能查看文档"
+	case 2:
+		desc = "拥有添加和修改文档的权限"
+	case 3:
+		desc = "拥有所有权限"
+	}
+
+	return desc
 }

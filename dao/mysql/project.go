@@ -86,7 +86,7 @@ func (p *ProjectDao) DeleteByID(id int) error {
 		yiigo.X{
 			"type": "delete",
 			"query": yiigo.X{
-				"table": "log",
+				"table": "history",
 				"where": "project_id = ?",
 				"binds": []interface{}{id},
 			},
