@@ -3,141 +3,147 @@
 {{ define "dropdown" }}{{ end }}
 
 {{ define "nav" }}
-    <ul class="nav" id="side-menu">
-        <li class="sidebar-search">
-            <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#categoryAddModal">
-                <i class="fa fa-plus"></i> 添加类别
-            </button>
-        </li>
-        {{ range .categories }}
-            <li>
-                <a href="/categories/view/{{ .ID }}" {{ if eq $.category.ID .ID }}class="active"{{ end }}>
-                    <i class="fa fa-folder{{ if eq $.category.ID .ID }}-open{{ end }} fa-fw"></i> {{ .Name }}
-                </a>
-            </li>
-        {{ end }}
-    </ul>
+<ul class="nav" id="side-menu">
+    <li class="sidebar-search">
+        <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#categoryAddModal">
+            <i class="fa fa-plus"></i> 添加类别
+        </button>
+    </li>
+    {{ range .categories }}
+    <li>
+        <a href="/categories/view/{{ .ID }}" {{ if eq $.category.ID .ID }}class="active"{{ end }}>
+            <i class="fa fa-folder{{ if eq $.category.ID .ID }}-open{{ end }} fa-fw"></i> {{ .Name }}
+        </a>
+    </li>
+    {{ end }}
+</ul>
 {{ end }}
 
 {{ define "breadcrumb" }}
-    <div class="row">
-        <div class="col-lg-12">
-            <ol class="breadcrumb">
-                <li><a href="/"><i class="fa fa-home"></i> 首页</a></li>
-                <li class="active"><i class="fa fa-folder"></i> {{ .category.Name }}</li>
-            </ol>
-        </div>
+<div class="row">
+    <div class="col-lg-12">
+        <ol class="breadcrumb">
+            <li><a href="/"><i class="fa fa-home"></i> 首页</a></li>
+            <li class="active"><i class="fa fa-folder"></i> {{ .category.Name }}</li>
+        </ol>
     </div>
+</div>
 {{ end }}
 
 {{ define "content" }}
-    <div class="row">
-        <div class="col-lg-12">
-            <h3 class="page-header margin-top-20">
-                {{ .category.Name }}
-                <div class="opt-wrap">
-                    <button class="btn btn-xs btn-primary" data-toggle="modal" data-target="#categoryEditModal"><i class="fa fa-edit"></i> 编辑</button>
-                    <button class="btn btn-xs btn-danger delete" data-url="/categories/delete/{{ .category.ID }}" data-msg="删除类别，会同时删除其下所有项目和文档，确定删除吗？"><i class="fa fa-trash-o"></i> 删除</button>
-                </div>
-            </h3>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default project-panel">
+            <div class="panel-heading">
+                <h3 class="panel-title success">
+                    <i class="fa fa-book"></i> 项目列表
+                    <div class="pull-right">
+                        <button class="btn btn-xs btn-primary" data-toggle="modal" data-target="#categoryEditModal"><i class="fa fa-edit"></i> 编辑</button>
+                        <button class="btn btn-xs btn-danger delete" data-url="/categories/delete/{{ .category.ID }}" data-msg="删除类别，会同时删除其下所有项目和文档，确定删除吗？"><i class="fa fa-trash-o"></i> 删除</button>
+                    </div>
+                </h3>
+            </div>
+            <div class="panel-body">
+                <a href="/projects/add/{{ .category.ID }}">
+                    <div class="col-lg-3">
+                        <div class="panel panel-green">
+                            <div class="panel-heading align-center">
+                                <i class="fa fa-book fa-5x"></i>
+                            </div>
+                            <div class="panel-footer h3 success align-center"><i class="fa fa-plus"></i></div>
+                        </div>
+                    </div>
+                </a>
+                {{ range .projects }}
+                    <a href="/projects/view/{{ .ID }}">
+                        <div class="col-lg-3">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading align-center">
+                                    <i class="fa fa-book fa-5x"></i>
+                                </div>
+                                <div class="panel-footer h3 primary align-center">{{ .Name }}</div>
+                            </div>
+                        </div>
+                    </a>
+                {{ end }}
+            </div>
         </div>
     </div>
-    <div class="row">
-        <a href="/projects/add/{{ .category.ID }}">
-            <div class="col-lg-3">
-                <div class="panel panel-green">
-                    <div class="panel-heading align-center">
-                        <i class="fa fa-book fa-5x"></i>
-                    </div>
-                    <div class="panel-footer h3 success align-center"><i class="fa fa-plus"></i></div>
-                </div>
-            </div>
-        </a>
-        {{ range .projects }}
-            <a href="/projects/view/{{ .ID }}">
-                <div class="col-lg-3">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading align-center">
-                            <i class="fa fa-book fa-5x"></i>
-                        </div>
-                        <div class="panel-footer h3 primary align-center">{{ .Name }}</div>
-                    </div>
-                </div>
-            </a>
-        {{ end }}
-    </div>
+</div>
+{{ end }}
 
-    <!-- Modal -->
-    <div class="modal fade" id="categoryAddModal" tabindex="-1" role="dialog" aria-labelledby="categoryAddModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title success" id="categoryAddModalLabel">
-                        <i class="fa fa-plus"></i> 添加类别
-                    </h4>
-                </div>
-                <form class="ajax_form" role="form" action="/categories/add" data-modal="#categoryAddModalLabel">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <label><i class="required">*</i> 类别名称</label>
-                                        <input type="text" name="name" class="form-control" placeholder="类别名称" required="required">
-                                    </div>
+{{ define "modal" }}
+<!-- Modal -->
+<div class="modal fade" id="categoryAddModal" tabindex="-1" role="dialog" aria-labelledby="categoryAddModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title success" id="categoryAddModalLabel">
+                    <i class="fa fa-plus"></i> 添加类别
+                </h4>
+            </div>
+            <form class="ajax_form" role="form" action="/categories/add" data-modal="#categoryAddModalLabel">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label><i class="required">*</i> 类别名称</label>
+                                    <input type="text" name="name" class="form-control" placeholder="类别名称" required="required">
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> 取消</button>
-                    <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> 提交</button>
-                </div>
-                </form>
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> 取消</button>
+                <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> 提交</button>
+            </div>
+            </form>
         </div>
     </div>
+</div>
 
-    <div class="modal fade" id="categoryEditModal" tabindex="-1" role="dialog" aria-labelledby="categoryEditModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title primary" id="categoryEditModalLabel">
-                        <i class="fa fa-edit"></i> 编辑类别
-                    </h4>
-                </div>
-                <form class="ajax_form" role="form" action="/categories/edit/{{ .category.ID }}" data-modal="#categoryEditModal">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <label><i class="required">*</i> 类别名称</label>
-                                        <input type="text" name="name" class="form-control" value="{{ .category.Name }}" placeholder="类别名称" required="required">
-                                    </div>
+<div class="modal fade" id="categoryEditModal" tabindex="-1" role="dialog" aria-labelledby="categoryEditModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title primary" id="categoryEditModalLabel">
+                    <i class="fa fa-edit"></i> 编辑类别
+                </h4>
+            </div>
+            <form class="ajax_form" role="form" action="/categories/edit/{{ .category.ID }}" data-modal="#categoryEditModal">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label><i class="required">*</i> 类别名称</label>
+                                    <input type="text" name="name" class="form-control" value="{{ .category.Name }}" placeholder="类别名称" required="required">
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> 取消</button>
-                    <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> 保存</button>
-                </div>
-                </form>
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> 取消</button>
+                <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> 保存</button>
+            </div>
+            </form>
         </div>
     </div>
+</div>
 {{ end }}
 
 {{ define "js" }}
-    <script type="text/javascript" src="/assets/js/form.js?v={{ .version }}"></script>
-    <script type="text/javascript" src="/assets/js/app.js?v={{ .version }}"></script>
+<script type="text/javascript" src="/assets/js/form.js?v={{ .version }}"></script>
+<script type="text/javascript" src="/assets/js/app.js?v={{ .version }}"></script>
 {{ end }}
 
  {{ define "view" }}

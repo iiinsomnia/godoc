@@ -1,9 +1,5 @@
-body {
-    font-style: normal;
-    font-family: PingFang SC, Helvetica, Luxi Sans, DejaVu Sans, Tahoma, Hiragino Sans GB, STHeiti, Microsoft YaHei, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    font-smoothing: antialiased;
+ body {
+    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
 }
 table th, table td {
     white-space: nowrap !important;
@@ -81,17 +77,6 @@ i.required{
 .breadcrumb {
     margin-top: 20px;
 }
-.page-header {
-    position: relative;
-}
-.view-body .section-content {
-    padding: 0 20px;
-}
-.opt-wrap {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-}
 .sidebar-search a {
     padding: 6px 12px !important;
 }
@@ -122,6 +107,9 @@ i.required{
 .tagsinput {
     overflow: hidden !important;
 }
+.project-panel .panel-body {
+    padding: 15px 0px 0px 0px;
+}
 .list-panel .panel-body {
     padding: 0;
 }
@@ -130,6 +118,9 @@ i.required{
 }
 .list-panel .panel-footer {
     height: 55px;
+}
+.view-panel .panel-body .section-content {
+    padding: 0 20px;
 }
 .pagination {
     margin: 0;
