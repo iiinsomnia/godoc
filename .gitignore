@@ -12,7 +12,5 @@
 
 # Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
 .glide/
-env.ini
-log.xml
 *.log
 rice-box.go
