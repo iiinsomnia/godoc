@@ -24,16 +24,18 @@ func (u *UserDao) GetByPagination(params url.Values, limit int, offset int, data
 	binds := []interface{}{}
 
 	for k, v := range params {
-		switch k {
-		case "name":
-			where = append(where, "name = ?")
-			binds = append(binds, v[0])
-		case "email":
-			where = append(where, "email = ?")
-			binds = append(binds, v[0])
-		case "role":
-			where = append(where, "role = ?")
-			binds = append(binds, v[0])
+		if strings.TrimSpace(v[0]) != "" {
+			switch k {
+			case "name":
+				where = append(where, "name = ?")
+				binds = append(binds, v[0])
+			case "email":
+				where = append(where, "email = ?")
+				binds = append(binds, v[0])
+			case "role":
+				where = append(where, "role = ?")
+				binds = append(binds, v[0])
+			}
 		}
 	}
 

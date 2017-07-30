@@ -54,11 +54,13 @@ func (u *UserController) Index(c *gin.Context) {
 	}
 
 	u.addFuncs(template.FuncMap{
+		"int":               helpers.Int,
 		"httpBuildQueryUrl": helpers.HttpBuildQueryUrl,
 	}).addTpls("layouts/pagination").render(c, "index", gin.H{
 		"count":     count,
 		"totalPage": totalPage,
 		"query":     query,
+		"roles":     rbac.Roles,
 		"users":     data,
 		"pagination": gin.H{
 			"uri":      "/users",
