@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"godoc/middlewares"
 	"godoc/routes"
 	"godoc/views"
 	"runtime"
@@ -64,6 +65,7 @@ func run() {
 	gin.SetMode(mode)
 
 	r := gin.New()
+	r.Use(middlewares.ErrorMiddleware())
 
 	r.StaticFS("/assets", assets.Asset.HTTPBox())
 	r.StaticFile("/favicon.ico", "./favicon.ico")

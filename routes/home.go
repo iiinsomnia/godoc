@@ -13,6 +13,8 @@ func LoadHomeRoutes(r *gin.Engine) {
 	r.GET("/login", homeController.Login)
 	r.POST("/login/:captchaID", homeController.Login)
 	r.GET("/captcha/:id", homeController.Captcha)
+	r.GET("/404", homeController.NotFound)
+	r.GET("/500", homeController.InternalServerError)
 
 	g := r.Group("")
 	g.Use(middlewares.AuthMiddleware())

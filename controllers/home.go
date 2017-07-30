@@ -102,3 +102,11 @@ func (h *HomeController) Captcha(c *gin.Context) {
 		yiigo.LogError(err.Error)
 	}
 }
+
+func (h *HomeController) NotFound(c *gin.Context) {
+	h.renderError(c, 404, "Page Not Found.")
+}
+
+func (h *HomeController) InternalServerError(c *gin.Context) {
+	h.renderError(c, 500, "Internal Server Error.")
+}
