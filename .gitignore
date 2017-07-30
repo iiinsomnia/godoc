@@ -15,3 +15,4 @@
 env.ini
 log.xml
 *.log
+rice-box.go
