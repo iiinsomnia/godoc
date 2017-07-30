@@ -4,11 +4,14 @@
 
 {{ define "nav" }}
 <ul class="nav" id="side-menu">
+    {{ if ne .identity.Role 1 }}
     <li class="sidebar-search">
         <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#categoryAddModal">
             <i class="fa fa-plus"></i> 添加类别
         </button>
     </li>
+    {{ end }}
+
     {{ range .categories }}
     <li>
         <a href="/categories/view/{{ .ID }}" {{ if eq $.category.ID .ID }}class="active"{{ end }}>
@@ -37,13 +40,18 @@
             <div class="panel-heading">
                 <h3 class="panel-title success">
                     <i class="fa fa-book"></i> 项目列表
+                    {{ if ne .identity.Role 1 }}
                     <div class="pull-right">
                         <button class="btn btn-xs btn-primary" data-toggle="modal" data-target="#categoryEditModal"><i class="fa fa-edit"></i> 编辑</button>
+                        {{ if eq .identity.Role 3 }}
                         <button class="btn btn-xs btn-danger delete" data-url="/categories/delete/{{ .category.ID }}" data-msg="删除类别，会同时删除其下所有项目和文档，确定删除吗？"><i class="fa fa-trash-o"></i> 删除</button>
+                        {{ end }}
                     </div>
+                    {{ end }}
                 </h3>
             </div>
             <div class="panel-body">
+                {{ if ne .identity.Role 1 }}
                 <a href="/projects/add/{{ .category.ID }}">
                     <div class="col-lg-3">
                         <div class="panel panel-green">
@@ -54,6 +62,8 @@
                         </div>
                     </div>
                 </a>
+                {{ end }}
+
                 {{ range .projects }}
                     <a href="/projects/view/{{ .ID }}">
                         <div class="col-lg-3">

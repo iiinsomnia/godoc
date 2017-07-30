@@ -190,6 +190,6 @@ func (c *controller) recover(ctx *gin.Context) {
 
 	if err := recover(); err != nil {
 		yiigo.LogErrorf("%s", err)
-		ctx.String(http.StatusInternalServerError, "%s", err)
+		c.renderError(ctx, 500, "内部服务器错误")
 	}
 }

@@ -36,6 +36,13 @@ func NewUserController(r *gin.Engine) *UserController {
 }
 
 func (u *UserController) Index(c *gin.Context) {
+	identity := rbac.GetIdentity(c)
+
+	if identity.Role != 3 {
+		u.renderError(c, 403, "无操作权限")
+		return
+	}
+
 	query := c.Request.URL.Query()
 
 	userService := service.NewUserService(c)
@@ -65,6 +72,13 @@ func (u *UserController) Index(c *gin.Context) {
 }
 
 func (u *UserController) Add(c *gin.Context) {
+	identity := rbac.GetIdentity(c)
+
+	if identity.Role != 3 {
+		u.renderError(c, 403, "无操作权限")
+		return
+	}
+
 	if c.Request.Method == "GET" {
 		u.render(c, "add", gin.H{
 			"defaultPass": yiigo.GetEnvString("app", "defaultPass", "123"),
@@ -119,6 +133,13 @@ func (u *UserController) Add(c *gin.Context) {
 }
 
 func (u *UserController) Edit(c *gin.Context) {
+	identity := rbac.GetIdentity(c)
+
+	if identity.Role != 3 {
+		u.renderError(c, 403, "无操作权限")
+		return
+	}
+
 	id := c.Param("id")
 	_id, _ := strconv.Atoi(id)
 
@@ -219,6 +240,13 @@ func (u *UserController) Password(c *gin.Context) {
 }
 
 func (u *UserController) Reset(c *gin.Context) {
+	identity := rbac.GetIdentity(c)
+
+	if identity.Role != 3 {
+		u.renderError(c, 403, "无操作权限")
+		return
+	}
+
 	id := c.Param("id")
 	_id, _ := strconv.Atoi(id)
 
@@ -242,6 +270,13 @@ func (u *UserController) Reset(c *gin.Context) {
 }
 
 func (u *UserController) Delete(c *gin.Context) {
+	identity := rbac.GetIdentity(c)
+
+	if identity.Role != 3 {
+		u.renderError(c, 403, "无操作权限")
+		return
+	}
+
 	id := c.Param("id")
 	_id, _ := strconv.Atoi(id)
 

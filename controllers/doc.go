@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"godoc/i18n"
 	"godoc/params"
+	"godoc/rbac"
 	"godoc/service"
 	"html/template"
 	"strconv"
@@ -55,6 +56,7 @@ func (d *DocController) View(c *gin.Context) {
 	history, _ := historyService.GetHistory(_id)
 
 	d.addFuncs(template.FuncMap{
+		"explode":        strings.Split,
 		"getHistoryFlag": params.GetHistoryFlag,
 	}).render(c, "view", gin.H{
 		"doc":     doc,
@@ -64,6 +66,13 @@ func (d *DocController) View(c *gin.Context) {
 }
 
 func (d *DocController) Add(c *gin.Context) {
+	identity := rbac.GetIdentity(c)
+
+	if identity.Role == 1 {
+		d.renderError(c, 403, "无操作权限")
+		return
+	}
+
 	projectID := c.Param("project")
 	_projectID, _ := strconv.Atoi(projectID)
 
@@ -127,6 +136,13 @@ func (d *DocController) Add(c *gin.Context) {
 }
 
 func (d *DocController) Edit(c *gin.Context) {
+	identity := rbac.GetIdentity(c)
+
+	if identity.Role == 1 {
+		d.renderError(c, 403, "无操作权限")
+		return
+	}
+
 	id := c.Param("id")
 	_id, _ := strconv.Atoi(id)
 
@@ -182,6 +198,13 @@ func (d *DocController) Edit(c *gin.Context) {
 }
 
 func (d *DocController) Delete(c *gin.Context) {
+	identity := rbac.GetIdentity(c)
+
+	if identity.Role != 3 {
+		d.renderError(c, 403, "无操作权限")
+		return
+	}
+
 	id := c.Param("id")
 	_id, _ := strconv.Atoi(id)
 

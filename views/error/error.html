@@ -1,25 +1,23 @@
-{{ define "css" }}{{ end }}
-
-{{ define "body_class" }}
-	error-page
+{{ define "css" }}
+	<link rel="stylesheet" type="text/css" href="/assets/css/error.css?v={{ .version }}"/>
 {{ end }}
 
 {{ define "content" }}
-<div class="content">
-        <div class="row">
-            <div class="col-sm-12">
-                <h3 class="title">{{ .code }}</h3>
-            </div>
-            <div class="col-sm-12">
-                <p class="message">{{ .msg }}</p>
-            </div>
-            <div class="col-sm-12">
-                <p>
-                    <a href="javascript:window.history.back()" class="btn btn-blue btn-lg"><i class="fa fa-arrow-left"></i> 返回</a>
-                </p>
-            </div>
-        </div>
+<div class="row">
+    <div class="col-sm-12">
+        <h1 class="title">{{ .code }}</h1>
     </div>
+    <div class="col-sm-12">
+        <p class="message">{{ .msg }}</p>
+    </div>
+    <div class="col-sm-12">
+        <p>
+            <a href="javascript:window.history.back();" class="btn btn-blue btn-lg">
+                <i class="fa fa-arrow-left"></i> 返 回
+            </a>
+        </p>
+    </div>
+</div>
 {{ end }}
 
 {{ define "js" }}{{ end }}

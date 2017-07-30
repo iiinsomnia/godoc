@@ -4,11 +4,14 @@
 
 {{ define "nav" }}
 <ul class="nav" id="side-menu">
+    {{ if ne .identity.Role 1 }}
     <li class="sidebar-search">
         <button type="button" class="btn btn-success btn-block">
             <i class="fa fa-plus"></i> 添加类别
         </button>
     </li>
+    {{ end }}
+
     {{ range .categories }}
     <li>
         <a href="/categories/view/{{ .ID }}" {{ if eq $.category.ID .ID }}class="active"{{ end }}>

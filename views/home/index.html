@@ -4,14 +4,20 @@
 
 {{ define "nav" }}
 <ul class="nav" id="side-menu">
+	{{ if ne .identity.Role 1 }}
 	<li class="sidebar-search">
 		<button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#categoryAddModal">
 			<i class="fa fa-plus"></i> 添加类别
 		</button>
 	</li>
+	{{ end }}
+
+	{{ if eq .identity.Role 3 }}
 	<li>
 		<a href="/users"><i class="fa fa-users fa-fw"></i> 用户管理</a>
 	</li>
+	{{ end }}
+
 	{{ range .categories }}
 	<li>
 		<a href="/categories/view/{{ .ID }}">
@@ -27,7 +33,7 @@
 {{ define "content" }}
 <div class="row">
 	<div class="col-lg-12">
-		<div class="panel panel-default view-panel">
+		<div class="panel panel-default home-panel view-panel">
 			<div class="panel-heading">
 				<h3 class="panel-title primary"><i class="fa fa-desktop"></i> 服务器信息</h3>
 			</div>

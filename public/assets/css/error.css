@@ -1,0 +1,31 @@
+body {
+    padding: 90px 0;
+    background-image: url(../img/error.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+}
+.container {
+    text-align: center;
+    color: white;
+}
+.title {
+    font-size: 142px;
+    line-height: 200px;
+}
+.message {
+    font-size: 42px;
+    line-height: 50px;
+    margin-bottom: 40px;
+}
+.btn-blue {
+    background-color: #3498db;
+    border-color: #3498db;
+    color: white;
+    border-radius: 0;
+}
+.btn-blue:hover, .btn-blue:visited {
+    background-color: #2980b9;
+    color: white;
+}

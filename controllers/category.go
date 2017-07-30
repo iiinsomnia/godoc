@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"godoc/i18n"
+	"godoc/rbac"
 	"godoc/service"
 	"strconv"
 	"strings"
@@ -57,6 +58,13 @@ func (c *CategoryController) View(ctx *gin.Context) {
 }
 
 func (c *CategoryController) Add(ctx *gin.Context) {
+	identity := rbac.GetIdentity(ctx)
+
+	if identity.Role == 1 {
+		c.renderError(ctx, 403, "无操作权限")
+		return
+	}
+
 	form := &CategoryForm{}
 
 	if validate := ctx.ShouldBindWith(form, binding.Form); validate != nil {
@@ -82,6 +90,13 @@ func (c *CategoryController) Add(ctx *gin.Context) {
 }
 
 func (c *CategoryController) Edit(ctx *gin.Context) {
+	identity := rbac.GetIdentity(ctx)
+
+	if identity.Role == 1 {
+		c.renderError(ctx, 403, "无操作权限")
+		return
+	}
+
 	id := ctx.Param("id")
 	_id, _ := strconv.Atoi(id)
 
@@ -110,6 +125,13 @@ func (c *CategoryController) Edit(ctx *gin.Context) {
 }
 
 func (c *CategoryController) Delete(ctx *gin.Context) {
+	identity := rbac.GetIdentity(ctx)
+
+	if identity.Role != 3 {
+		c.renderError(ctx, 403, "无操作权限")
+		return
+	}
+
 	id := ctx.Param("id")
 	_id, _ := strconv.Atoi(id)
 

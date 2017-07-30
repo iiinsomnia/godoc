@@ -7,14 +7,16 @@
 
 {{ define "nav" }}
 <ul class="nav" id="side-menu">
+    {{ if ne .identity.Role 1 }}
     <li class="sidebar-search">
         <a href="/docs/add/{{ .project.ID }}" class="btn btn-success btn-block" role="button">
             <i class="fa fa-plus"></i> 添加文档
         </a>
     </li>
+    {{ end }}
     <li class="sidebar-search">
         <div class="input-group custom-search-form">
-            <input type="text" id="doc_search" class="form-control" placeholder="搜 索">
+            <input type="text" id="doc_search" class="form-control" placeholder="文档名称搜索">
             <span class="input-group-btn">
                 <button class="btn btn-default" type="button">
                     <i class="fa fa-search"></i>

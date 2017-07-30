@@ -5,10 +5,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="godoc，一个用golang开发的文档管理系统">
+    <meta name="keywords" content="go,golang,doc,godoc,文档,文档管理,文档管理系统,API,API文档管理,API文档管理系统">
+    <meta name="author" content="IIInsomnia">
 
-    <title>SB Admin 2 - Bootstrap Admin Theme</title>
+    <title>GODOC | 文档管理系统</title>
 
     <link type="text/css" href="/assets/vendor/bootstrap/css/bootstrap.min.css?v={{ .version }}" rel="stylesheet">
 	<link type="text/css" href="/assets/vendor/metisMenu/metisMenu.min.css?v={{ .version }}" rel="stylesheet">
@@ -43,7 +44,7 @@
                         <li><a href="#"><i class="fa fa-envelope fa-fw"></i> {{ .identity.Email }}</a></li>
                         <li><a href="#"><i class="fa fa-leaf fa-fw"></i> {{ .identity.Role | getRoleName }}</a></li>
                         <li><a href="#"><i class="fa fa-clock-o fa-fw"></i> {{ .identity.LastLoginTime.Format "2006-01-02 15:04:05" }}</a></li>
-                        <li><a href="#" data-toggle="modal" data-target="#categoryAddModal"><i class="fa fa-lock fa-fw"></i> 修改密码</a></li>
+                        <li><a href="#" data-toggle="modal" data-target="#passwordModal"><i class="fa fa-lock fa-fw"></i> 修改密码</a></li>
                         <li class="divider"></li>
                         <li><a href="/logout"><i class="fa fa-sign-out fa-fw"></i> 注销</a></li>
                     </ul>

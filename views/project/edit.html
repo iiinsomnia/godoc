@@ -4,11 +4,13 @@
 
 {{ define "nav" }}
 <ul class="nav" id="side-menu">
+    {{ if ne .identity.Role 1 }}
     <li class="sidebar-search">
         <a href="#" class="btn btn-success btn-block" role="button">
             <i class="fa fa-plus"></i> 添加文档
         </a>
     </li>
+    {{ end }}
     <li class="sidebar-search">
         <div class="input-group custom-search-form">
             <input type="text" class="form-control" placeholder="搜 索">

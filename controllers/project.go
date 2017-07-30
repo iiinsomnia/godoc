@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"godoc/i18n"
+	"godoc/rbac"
 	"godoc/service"
 	"strconv"
 	"strings"
@@ -55,6 +56,13 @@ func (p *ProjectController) View(c *gin.Context) {
 }
 
 func (p *ProjectController) Add(c *gin.Context) {
+	identity := rbac.GetIdentity(c)
+
+	if identity.Role == 1 {
+		p.renderError(c, 403, "无操作权限")
+		return
+	}
+
 	categoryID := c.Param("category")
 	_categoryID, _ := strconv.Atoi(categoryID)
 
@@ -110,6 +118,13 @@ func (p *ProjectController) Add(c *gin.Context) {
 }
 
 func (p *ProjectController) Edit(c *gin.Context) {
+	identity := rbac.GetIdentity(c)
+
+	if identity.Role == 1 {
+		p.renderError(c, 403, "无操作权限")
+		return
+	}
+
 	id := c.Param("id")
 	_id, _ := strconv.Atoi(id)
 
@@ -165,6 +180,13 @@ func (p *ProjectController) Edit(c *gin.Context) {
 }
 
 func (p *ProjectController) Delete(c *gin.Context) {
+	identity := rbac.GetIdentity(c)
+
+	if identity.Role != 3 {
+		p.renderError(c, 403, "无操作权限")
+		return
+	}
+
 	id := c.Param("id")
 	_id, _ := strconv.Atoi(id)
 

@@ -4,11 +4,13 @@
 
 {{ define "nav" }}
 <ul class="nav" id="side-menu">
+	{{ if ne .identity.Role 1 }}
 	<li class="sidebar-search">
 		<a href="/docs/add/{{ .project.ID }}" class="btn btn-success btn-block" role="button">
 			<i class="fa fa-plus"></i> 添加文档
 		</a>
 	</li>
+	{{ end }}
 	<li class="sidebar-search">
 		<div class="input-group custom-search-form">
 			<input type="text" id="doc_search" class="form-control" placeholder="搜 索">
@@ -56,10 +58,14 @@
 			<div class="panel-heading">
 				<h3 class="panel-title success">
 					<i class="fa fa-book"></i> {{ .project.Name }}
+					{{ if ne .identity.Role 1 }}
 					<div class="pull-right">
 						<a href="/projects/edit/{{ .project.ID }}" class="btn btn-xs btn-primary"><i class="fa fa-edit"></i> 编辑</a>
-				<button class="btn btn-xs btn-danger delete" data-url="/projects/delete/{{ .project.ID }}" data-msg="删除项目，会同时删除其下所有文档，确定删除吗？"><i class="fa fa-trash-o"></i> 删除</button>
+						{{ if eq .identity.Role 3 }}
+						<button class="btn btn-xs btn-danger delete" data-url="/projects/delete/{{ .project.ID }}" data-msg="删除项目，会同时删除其下所有文档，确定删除吗？"><i class="fa fa-trash-o"></i> 删除</button>
+						{{ end }}
 					</div>
+					{{ end }}
 				</h3>
 			</div>
 			<div class="panel-body">
