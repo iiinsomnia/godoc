@@ -2,17 +2,21 @@
 
 go开发的一个简单易用的文档管理系统，用于API等文档的管理，采用markdown编辑
 
-## 说明
+## 特点
 
-* 如果你会golang，则可以下载源码，自行 `go run` 或者 `go build`
-* 如果你尚未接触golang，则去 `release` 下载编译好的执行文件运行即可
+* 采用golang开发，部署简单
+* 只有一个执行文件，不依赖任何前端静态资源
+* 文档采用 markdown 编辑，程序员的最爱
 
 ## 运行
 
+* 去 `release` 下载编译好的执行文件
 * 导入 `godoc.sql`
 * 配置 `env.ini` 和 `log.xml` 配置文件
 * 执行相应操作系统的可执行文件
 * 访问：`localhost:8000`
+
+> 如果你是golang开发者，可以下载源码，自行 `go run` 或者 `go build`
 
 ### Mac & Linux
 
@@ -34,7 +38,7 @@ cd /godoc
 
 双击运行即可
 
-## 注意
+## 说明
 
 * 测试登录用户：admin/admin、demo/123
 * 访问端口可以在配置文件中设置，默认：8000
