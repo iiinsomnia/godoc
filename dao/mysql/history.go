@@ -1,6 +1,10 @@
 package mysql
 
-import "github.com/iiinsomnia/yiigo"
+import (
+	"time"
+
+	"github.com/iiinsomnia/yiigo"
+)
 
 type HistoryDao struct {
 	yiigo.MySQL
@@ -37,6 +41,9 @@ func (h *HistoryDao) GetByDocID(docID int, data interface{}) error {
 }
 
 func (h *HistoryDao) AddNewRecord(data yiigo.X) (int64, error) {
+	data["created_at"] = time.Now()
+	data["updated_at"] = time.Now()
+
 	id, err := h.MySQL.Insert(data)
 
 	if err != nil {

@@ -3,6 +3,7 @@ package mysql
 import (
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/iiinsomnia/yiigo"
 )
@@ -133,6 +134,9 @@ func (u *UserDao) GetByAccount(account string, data interface{}) error {
 }
 
 func (u *UserDao) AddNewRecord(data yiigo.X) (int64, error) {
+	data["created_at"] = time.Now()
+	data["updated_at"] = time.Now()
+
 	id, err := u.MySQL.Insert(data)
 
 	if err != nil {
@@ -148,6 +152,8 @@ func (u *UserDao) UpdateByID(id int, data yiigo.X) error {
 		"where": "id = ?",
 		"binds": []interface{}{id},
 	}
+
+	data["updated_at"] = time.Now()
 
 	_, err := u.MySQL.Update(query, data)
 

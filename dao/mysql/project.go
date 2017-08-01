@@ -1,6 +1,10 @@
 package mysql
 
-import "github.com/iiinsomnia/yiigo"
+import (
+	"time"
+
+	"github.com/iiinsomnia/yiigo"
+)
 
 type ProjectDao struct {
 	yiigo.MySQL
@@ -55,6 +59,9 @@ func (p *ProjectDao) GetByCategoryID(categoryID int, data interface{}) error {
 }
 
 func (p *ProjectDao) AddNewRecord(data yiigo.X) (int64, error) {
+	data["created_at"] = time.Now()
+	data["updated_at"] = time.Now()
+
 	id, err := p.MySQL.Insert(data)
 
 	if err != nil {
@@ -70,6 +77,8 @@ func (p *ProjectDao) UpdateByID(id int, data yiigo.X) error {
 		"where": "id = ?",
 		"binds": []interface{}{id},
 	}
+
+	data["updated_at"] = time.Now()
 
 	_, err := p.MySQL.Update(query, data)
 

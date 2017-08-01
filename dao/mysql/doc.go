@@ -1,6 +1,10 @@
 package mysql
 
-import "github.com/iiinsomnia/yiigo"
+import (
+	"time"
+
+	"github.com/iiinsomnia/yiigo"
+)
 
 type DocDao struct {
 	yiigo.MySQL
@@ -59,6 +63,9 @@ func (d *DocDao) GetByProjectID(projectID int, data interface{}) error {
 }
 
 func (d *DocDao) AddNewRecord(data yiigo.X) (int64, error) {
+	data["created_at"] = time.Now()
+	data["updated_at"] = time.Now()
+
 	id, err := d.MySQL.Insert(data)
 
 	if err != nil {
@@ -74,6 +81,8 @@ func (d *DocDao) UpdateByID(id int, data yiigo.X) error {
 		"where": "id = ?",
 		"binds": []interface{}{id},
 	}
+
+	data["updated_at"] = time.Now()
 
 	_, err := d.MySQL.Update(query, data)
 
