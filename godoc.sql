@@ -11,7 +11,7 @@
  Target Server Version : 50718
  File Encoding         : 65001
 
- Date: 30/07/2017 18:56:57
+ Date: 01/08/2017 21:56:50
 */
 
 SET NAMES utf8mb4;
@@ -23,9 +23,9 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `go_category`;
 CREATE TABLE `go_category` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `name` varchar(20) NOT NULL DEFAULT '' COMMENT '名称',
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `name` varchar(20) NOT NULL COMMENT '名称',
+  `created_at` datetime NOT NULL COMMENT '添加时间',
+  `updated_at` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
@@ -44,13 +44,13 @@ COMMIT;
 DROP TABLE IF EXISTS `go_doc`;
 CREATE TABLE `go_doc` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `title` varchar(50) NOT NULL DEFAULT '' COMMENT '名称',
+  `title` varchar(50) NOT NULL COMMENT '名称',
   `category_id` int(11) NOT NULL COMMENT '类别ID',
   `project_id` int(11) NOT NULL COMMENT '项目ID',
-  `label` varchar(50) NOT NULL DEFAULT '' COMMENT '标签',
+  `label` varchar(50) NOT NULL COMMENT '标签',
   `markdown` mediumtext COMMENT 'markdown',
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `created_at` datetime NOT NULL COMMENT '添加时间',
+  `updated_at` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
   KEY `index_project` (`project_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='文档表';
@@ -76,8 +76,8 @@ CREATE TABLE `go_history` (
   `project_id` int(11) NOT NULL COMMENT '项目ID',
   `doc_id` int(11) NOT NULL COMMENT '文档ID',
   `flag` tinyint(4) NOT NULL COMMENT '类别(1：创建；2：修改)',
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `created_at` datetime NOT NULL COMMENT '添加时间',
+  `updated_at` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
   KEY `index_doc` (`doc_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='操作历史表';
@@ -98,11 +98,11 @@ COMMIT;
 DROP TABLE IF EXISTS `go_project`;
 CREATE TABLE `go_project` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `name` varchar(20) NOT NULL DEFAULT '' COMMENT '名称',
+  `name` varchar(20) NOT NULL COMMENT '名称',
   `category_id` int(11) NOT NULL COMMENT '类别ID',
-  `description` varchar(255) NOT NULL DEFAULT '' COMMENT '描述',
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `description` varchar(255) NOT NULL COMMENT '描述',
+  `created_at` datetime NOT NULL COMMENT '添加时间',
+  `updated_at` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
   KEY `index_category` (`category_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='项目表';
@@ -122,15 +122,15 @@ COMMIT;
 DROP TABLE IF EXISTS `go_user`;
 CREATE TABLE `go_user` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `name` varchar(20) NOT NULL DEFAULT '' COMMENT '用户名',
-  `email` varchar(50) NOT NULL DEFAULT '' COMMENT '邮箱',
-  `password` varchar(255) NOT NULL DEFAULT '' COMMENT '密码',
-  `salt` varchar(20) NOT NULL DEFAULT '' COMMENT '加密盐',
+  `name` varchar(20) NOT NULL COMMENT '用户名',
+  `email` varchar(50) NOT NULL COMMENT '邮箱',
+  `password` varchar(255) NOT NULL COMMENT '密码',
+  `salt` varchar(20) NOT NULL COMMENT '加密盐',
   `role` int(11) NOT NULL COMMENT '角色',
-  `last_login_ip` varchar(20) NOT NULL DEFAULT '' COMMENT '最近登录IP',
-  `last_login_time` datetime NOT NULL DEFAULT '1970-01-01 00:00:00' COMMENT '最近登录时间',
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `last_login_ip` varchar(20) DEFAULT '' COMMENT '最近登录IP',
+  `last_login_time` datetime DEFAULT NULL COMMENT '最近登录时间',
+  `created_at` datetime NOT NULL COMMENT '添加时间',
+  `updated_at` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_email` (`email`),
   UNIQUE KEY `index_name` (`name`)
