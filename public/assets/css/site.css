@@ -1,16 +1,5 @@
- body {
-    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-}
 table th, table td {
     white-space: nowrap !important;
-}
-ul {
-    list-style: none;
-}
-select {
-    font-size: 14px;
-    height: 34px;
-    vertical-align: middle;
 }
 textarea {
     resize: none;
@@ -128,12 +117,6 @@ i.required{
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-}
-.markdown-body {
-    font-family: PingFang SC, Helvetica, Luxi Sans, DejaVu Sans, Tahoma, Hiragino Sans GB, STHeiti, Microsoft YaHei, Arial, sans-serif;
-}
-.markdown-body pre {
-    font-family: Menlo, Monaco, Consolas, Courier, monospace
 }
 .history-wrap {
     max-height: 402px;
