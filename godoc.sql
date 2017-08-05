@@ -128,7 +128,7 @@ CREATE TABLE `go_user` (
   `salt` varchar(20) NOT NULL COMMENT '加密盐',
   `role` int(11) NOT NULL COMMENT '角色',
   `last_login_ip` varchar(20) DEFAULT '' COMMENT '最近登录IP',
-  `last_login_time` datetime DEFAULT NULL COMMENT '最近登录时间',
+  `last_login_time` datetime DEFAULT '1970-01-01 00:00:00' COMMENT '最近登录时间',
   `created_at` datetime NOT NULL COMMENT '添加时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
