@@ -18,7 +18,7 @@ go开发的一个简单易用的文档管理系统，用于API等文档的管理
 
 > `log.xml` 为日志配置文件，如有需要，请修改此文件
 >
-> 如果你是golang开发者，可以下载源码，`go get` 所有依赖包后自己运行
+> 如果你是golang开发者，可以下载源码，`go get github.com/iiinsomnia/yiigo` 后自己运行
 
 ### Mac & Linux
 
