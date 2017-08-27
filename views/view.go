@@ -30,8 +30,8 @@ type HTML struct {
 }
 
 // LoadViews init load view box
-func LoadViews(path string) {
-	viewBox = rice.MustFindBox(path)
+func LoadViews() {
+	viewBox = rice.MustFindBox("../views")
 }
 
 // L set view layout

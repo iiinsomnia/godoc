@@ -32,8 +32,8 @@ func main() {
 
 // load static resource
 func loadStaticResource() {
-	assets.LoadAssets("../assets")
-	views.LoadViews("../views")
+	assets.LoadAssets()
+	views.LoadViews()
 }
 
 // load routes
