@@ -4,25 +4,26 @@ import (
 	"database/sql"
 	"errors"
 
+	"godoc/models"
 	"godoc/rbac"
 
 	"github.com/gin-gonic/gin"
 	"github.com/iiinsomnia/yiigo"
 )
 
-type AuthService struct {
-	Identity *rbac.Identity
+type Auth struct {
+	Identity *models.Identity
 }
 
-func NewAuthService(c *gin.Context) *AuthService {
-	return &AuthService{
+func NewAuth(c *gin.Context) *Auth {
+	return &Auth{
 		Identity: rbac.GetIdentity(c),
 	}
 }
 
 // Login 用户登录
-func (a *AuthService) Login(c *gin.Context, account string, password string) error {
-	identity := &rbac.Identity{}
+func (a *Auth) Login(c *gin.Context, account string, password string) error {
+	identity := &models.Identity{}
 
 	query := "SELECT id, name, email, password, salt, role, last_login_ip, last_login_time FROM go_user WHERE name = ? OR email = ?"
 	err := yiigo.DB.Get(identity, query, account, account)
@@ -32,7 +33,7 @@ func (a *AuthService) Login(c *gin.Context, account string, password string) err
 			return errors.New("帐号不存在")
 		}
 
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: [%s %s]", err.Error(), query, account, account)
 
 		return errors.New("登录失败")
 	}

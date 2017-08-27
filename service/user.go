@@ -3,6 +3,7 @@ package service
 import (
 	"database/sql"
 	"fmt"
+	"godoc/models"
 	"godoc/rbac"
 	"math"
 	"net/url"
@@ -14,31 +15,20 @@ import (
 	"github.com/iiinsomnia/yiigo"
 )
 
-type UserService struct {
-	Identity *rbac.Identity
-}
-
 type User struct {
-	ID            int       `db:"id"`
-	Name          string    `db:"name"`
-	Email         string    `db:"email"`
-	Role          int       `db:"role"`
-	LastLoginIP   string    `db:"last_login_ip"`
-	LastLoginTime time.Time `db:"last_login_time"`
-	CreatedAt     time.Time `db:"created_at"`
-	UpdatedAt     time.Time `db:"updated_at"`
+	Identity *models.Identity
 }
 
-func NewUserService(c *gin.Context) *UserService {
-	return &UserService{
+func NewUser(c *gin.Context) *User {
+	return &User{
 		Identity: rbac.GetIdentity(c),
 	}
 }
 
-func (u *UserService) GetUserList(query url.Values, size ...int) (int, int, int, []User, error) {
+func (u *User) GetUserList(query url.Values, size ...int) (int, int, int, []models.User, error) {
 	defer yiigo.Flush()
 
-	data := []User{}
+	data := []models.User{}
 
 	curPage := 1
 	limit := 10
@@ -110,10 +100,10 @@ func (u *UserService) GetUserList(query url.Values, size ...int) (int, int, int,
 	return count, curPage, totalPage, data, err
 }
 
-func (u *UserService) GetDetail(id int) (*User, error) {
+func (u *User) GetDetail(id int) (*models.User, error) {
 	defer yiigo.Flush()
 
-	data := &User{}
+	data := &models.User{}
 
 	query := "SELECT id, name, email, role, last_login_ip, last_login_time, created_at, updated_at FROM go_user WHERE id = ?"
 
@@ -126,7 +116,7 @@ func (u *UserService) GetDetail(id int) (*User, error) {
 	return data, err
 }
 
-func (u *UserService) Add(data yiigo.X) (int64, error) {
+func (u *User) Add(data yiigo.X) (int64, error) {
 	defer yiigo.Flush()
 
 	data["created_at"] = time.Now()
@@ -146,7 +136,7 @@ func (u *UserService) Add(data yiigo.X) (int64, error) {
 	return id, nil
 }
 
-func (u *UserService) Edit(id int, data yiigo.X) error {
+func (u *User) Edit(id int, data yiigo.X) error {
 	defer yiigo.Flush()
 
 	data["updated_at"] = time.Now()
@@ -162,22 +152,23 @@ func (u *UserService) Edit(id int, data yiigo.X) error {
 	return err
 }
 
-func (u *UserService) Delete(id int) error {
+func (u *User) Delete(id int) error {
 	defer yiigo.Flush()
 
-	_, err := yiigo.DB.Exec("DELETE FROM go_user WHERE id = ?", id)
+	sql := "DELETE FROM go_user WHERE id = ?"
+	_, err := yiigo.DB.Exec(sql, id)
 
 	if err != nil {
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: [%d]", err.Error(), sql, id)
 	}
 
 	return err
 }
 
-func (u *UserService) CheckUnique(name string, email string, id ...int) (bool, error) {
+func (u *User) CheckUnique(name string, email string, id ...int) (bool, error) {
 	defer yiigo.Flush()
 
-	data := &User{}
+	data := &models.User{}
 	binds := []interface{}{name, email}
 
 	query := "SELECT id FROM go_user WHERE name = ? OR email = ?"
@@ -194,7 +185,7 @@ func (u *UserService) CheckUnique(name string, email string, id ...int) (bool, e
 			return true, nil
 		}
 
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: %v", err.Error(), query, binds)
 
 		return false, err
 	}

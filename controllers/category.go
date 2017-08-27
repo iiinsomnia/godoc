@@ -32,7 +32,7 @@ func (c *CategoryController) View(ctx *gin.Context) {
 	id := ctx.Param("id")
 	_id, _ := strconv.Atoi(id)
 
-	categoryService := service.NewCategoryService(ctx)
+	categoryService := service.NewCategory(ctx)
 	category, err := categoryService.GetDetail(_id)
 
 	if err != nil {
@@ -48,7 +48,7 @@ func (c *CategoryController) View(ctx *gin.Context) {
 
 	categories, _ := categoryService.GetAll()
 
-	projectService := service.NewProjectService(ctx)
+	projectService := service.NewProject(ctx)
 	projects, _ := projectService.GetProjects(_id)
 
 	c.V(ctx).Render("view", gin.H{
@@ -79,7 +79,7 @@ func (c *CategoryController) Add(ctx *gin.Context) {
 		"name": form.Name,
 	}
 
-	categoryService := service.NewCategoryService(ctx)
+	categoryService := service.NewCategory(ctx)
 	id, err := categoryService.Add(data)
 
 	if err != nil {
@@ -114,7 +114,7 @@ func (c *CategoryController) Edit(ctx *gin.Context) {
 		"name": form.Name,
 	}
 
-	categoryService := service.NewCategoryService(ctx)
+	categoryService := service.NewCategory(ctx)
 	err := categoryService.Edit(_id, data)
 
 	if err != nil {
@@ -136,7 +136,7 @@ func (c *CategoryController) Delete(ctx *gin.Context) {
 	id := ctx.Param("id")
 	_id, _ := strconv.Atoi(id)
 
-	categoryService := service.NewCategoryService(ctx)
+	categoryService := service.NewCategory(ctx)
 
 	err := categoryService.Delete(_id)
 

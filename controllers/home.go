@@ -33,7 +33,7 @@ func NewHomeController(r *gin.Engine) *HomeController {
 }
 
 func (h *HomeController) Index(c *gin.Context) {
-	categoryService := service.NewCategoryService(c)
+	categoryService := service.NewCategory(c)
 	categories, _ := categoryService.GetAll()
 
 	h.V(c).Render("index", gin.H{
@@ -76,7 +76,7 @@ func (h *HomeController) Login(c *gin.Context) {
 		return
 	}
 
-	authService := service.NewAuthService(c)
+	authService := service.NewAuth(c)
 	err := authService.Login(c, form.Account, form.Password)
 
 	if err != nil {

@@ -47,7 +47,7 @@ func (u *UserController) Index(c *gin.Context) {
 
 	query := c.Request.URL.Query()
 
-	userService := service.NewUserService(c)
+	userService := service.NewUser(c)
 	count, curPage, totalPage, data, err := userService.GetUserList(query)
 
 	if err != nil && err != sql.ErrNoRows {
@@ -103,7 +103,7 @@ func (u *UserController) Add(c *gin.Context) {
 		return
 	}
 
-	userService := service.NewUserService(c)
+	userService := service.NewUser(c)
 
 	unique, err := userService.CheckUnique(form.Name, form.Email)
 
@@ -149,7 +149,7 @@ func (u *UserController) Edit(c *gin.Context) {
 	id := c.Param("id")
 	_id, _ := strconv.Atoi(id)
 
-	userService := service.NewUserService(c)
+	userService := service.NewUser(c)
 
 	if c.Request.Method == "GET" {
 		user, err := userService.GetDetail(_id)
@@ -236,7 +236,7 @@ func (u *UserController) Password(c *gin.Context) {
 
 	identity := rbac.GetIdentity(c)
 
-	userService := service.NewUserService(c)
+	userService := service.NewUser(c)
 	err := userService.Edit(identity.ID, data)
 
 	if err != nil {
@@ -266,7 +266,7 @@ func (u *UserController) Reset(c *gin.Context) {
 		"salt":     salt,
 	}
 
-	userService := service.NewUserService(c)
+	userService := service.NewUser(c)
 	err := userService.Edit(_id, data)
 
 	if err != nil {
@@ -288,7 +288,7 @@ func (u *UserController) Delete(c *gin.Context) {
 	id := c.Param("id")
 	_id, _ := strconv.Atoi(id)
 
-	userService := service.NewUserService(c)
+	userService := service.NewUser(c)
 
 	err := userService.Delete(_id)
 

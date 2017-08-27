@@ -2,6 +2,7 @@ package service
 
 import (
 	"database/sql"
+	"godoc/models"
 	"godoc/rbac"
 	"time"
 
@@ -9,56 +10,47 @@ import (
 	"github.com/iiinsomnia/yiigo"
 )
 
-type ProjectService struct {
-	Identity *rbac.Identity
-}
-
 type Project struct {
-	ID           int       `db:"id"`
-	Name         string    `db:"name"`
-	CategoryID   int       `db:"category_id"`
-	CategoryName string    `db:"category_name"`
-	Description  string    `db:"description"`
-	CreatedAt    time.Time `db:"created_at"`
-	UpdatedAt    time.Time `db:"updated_at"`
+	Identity *models.Identity
 }
 
-func NewProjectService(c *gin.Context) *ProjectService {
-	return &ProjectService{
+func NewProject(c *gin.Context) *Project {
+	return &Project{
 		Identity: rbac.GetIdentity(c),
 	}
 }
 
-func (p *ProjectService) GetProjects(categoryID int) ([]Project, error) {
+func (p *Project) GetProjects(categoryID int) ([]models.Project, error) {
 	defer yiigo.Flush()
 
-	data := []Project{}
+	data := []models.Project{}
 
-	err := yiigo.DB.Select(&data, "SELECT * FROM go_project WHERE category_id = ? ORDER BY updated_at DESC", categoryID)
+	query := "SELECT * FROM go_project WHERE category_id = ? ORDER BY updated_at DESC"
+	err := yiigo.DB.Select(&data, query, categoryID)
 
 	if err != nil && err != sql.ErrNoRows {
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: [%d]", err.Error(), query, categoryID)
 	}
 
 	return data, err
 }
 
-func (p *ProjectService) GetDetail(id int) (*Project, error) {
+func (p *Project) GetDetail(id int) (*models.Project, error) {
 	defer yiigo.Flush()
 
-	data := &Project{}
+	data := &models.Project{}
 
 	query := "SELECT a.*, b.name AS category_name FROM go_project AS a LEFT JOIN go_category AS b ON a.category_id = b.id WHERE a.id = ?"
 	err := yiigo.DB.Get(data, query, id)
 
 	if err != nil && err != sql.ErrNoRows {
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: [%d]", err.Error(), query, id)
 	}
 
 	return data, err
 }
 
-func (p *ProjectService) Add(data yiigo.X) (int64, error) {
+func (p *Project) Add(data yiigo.X) (int64, error) {
 	defer yiigo.Flush()
 
 	data["created_at"] = time.Now()
@@ -68,7 +60,7 @@ func (p *ProjectService) Add(data yiigo.X) (int64, error) {
 	r, err := yiigo.DB.Exec(sql, binds...)
 
 	if err != nil {
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: %v", err.Error(), sql, binds)
 
 		return 0, err
 	}
@@ -78,7 +70,7 @@ func (p *ProjectService) Add(data yiigo.X) (int64, error) {
 	return id, nil
 }
 
-func (p *ProjectService) Edit(id int, data yiigo.X) error {
+func (p *Project) Edit(id int, data yiigo.X) error {
 	defer yiigo.Flush()
 
 	data["updated_at"] = time.Now()
@@ -88,13 +80,13 @@ func (p *ProjectService) Edit(id int, data yiigo.X) error {
 	_, err := yiigo.DB.Exec(sql, binds...)
 
 	if err != nil {
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: %v", err.Error(), sql, binds)
 	}
 
 	return err
 }
 
-func (c *ProjectService) Delete(id int) error {
+func (c *Project) Delete(id int) error {
 	defer yiigo.Flush()
 
 	tx, err := yiigo.DB.Beginx()
@@ -105,29 +97,32 @@ func (c *ProjectService) Delete(id int) error {
 		return err
 	}
 
-	_, err = tx.Exec("DELETE FROM go_history WHERE category_id = ?", id)
+	sql := "DELETE FROM go_history WHERE category_id = ?"
+	_, err = tx.Exec(sql, id)
 
 	if err != nil {
 		tx.Rollback()
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: [%d]", err.Error(), sql, id)
 
 		return err
 	}
 
-	_, err = tx.Exec("DELETE FROM go_doc WHERE category_id = ?", id)
+	sql = "DELETE FROM go_doc WHERE category_id = ?"
+	_, err = tx.Exec(sql, id)
 
 	if err != nil {
 		tx.Rollback()
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: [%d]", err.Error(), sql, id)
 
 		return err
 	}
 
-	_, err = tx.Exec("DELETE FROM go_project WHERE id = ?", id)
+	sql = "DELETE FROM go_project WHERE id = ?"
+	_, err = tx.Exec(sql, id)
 
 	if err != nil {
 		tx.Rollback()
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: [%d]", err.Error(), sql, id)
 
 		return err
 	}

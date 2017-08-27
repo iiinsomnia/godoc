@@ -36,7 +36,7 @@ func (d *DocController) View(c *gin.Context) {
 	id := c.Param("id")
 	_id, _ := strconv.Atoi(id)
 
-	docService := service.NewDocService(c)
+	docService := service.NewDoc(c)
 	doc, err := docService.GetDetail(_id)
 
 	if err != nil {
@@ -52,7 +52,7 @@ func (d *DocController) View(c *gin.Context) {
 
 	docs, _ := docService.GetDocs(doc.ProjectID)
 
-	historyService := service.NewHistoryService(c)
+	historyService := service.NewHistory(c)
 	history, _ := historyService.GetHistory(_id)
 
 	d.V(c).F(template.FuncMap{
@@ -76,7 +76,7 @@ func (d *DocController) Add(c *gin.Context) {
 	projectID := c.Param("project")
 	_projectID, _ := strconv.Atoi(projectID)
 
-	projectService := service.NewProjectService(c)
+	projectService := service.NewProject(c)
 	project, err := projectService.GetDetail(_projectID)
 
 	if err != nil {
@@ -91,7 +91,7 @@ func (d *DocController) Add(c *gin.Context) {
 	}
 
 	if c.Request.Method == "GET" {
-		docService := service.NewDocService(c)
+		docService := service.NewDoc(c)
 		docs, _ := docService.GetDocs(_projectID)
 
 		d.V(c).Render("add", gin.H{
@@ -124,7 +124,7 @@ func (d *DocController) Add(c *gin.Context) {
 		"project_id":  project.ID,
 	}
 
-	docService := service.NewDocService(c)
+	docService := service.NewDoc(c)
 	id, err := docService.Add(data, history)
 
 	if err != nil {
@@ -146,7 +146,7 @@ func (d *DocController) Edit(c *gin.Context) {
 	id := c.Param("id")
 	_id, _ := strconv.Atoi(id)
 
-	docService := service.NewDocService(c)
+	docService := service.NewDoc(c)
 
 	if c.Request.Method == "GET" {
 		doc, err := docService.GetDetail(_id)
@@ -208,7 +208,7 @@ func (d *DocController) Delete(c *gin.Context) {
 	id := c.Param("id")
 	_id, _ := strconv.Atoi(id)
 
-	docService := service.NewDocService(c)
+	docService := service.NewDoc(c)
 	doc, err := docService.GetDetail(_id)
 
 	if err != nil {

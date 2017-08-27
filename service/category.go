@@ -2,6 +2,7 @@ package service
 
 import (
 	"database/sql"
+	"godoc/models"
 	"godoc/rbac"
 	"time"
 
@@ -9,52 +10,47 @@ import (
 	"github.com/iiinsomnia/yiigo"
 )
 
-type CategoryService struct {
-	Identity *rbac.Identity
-}
-
 type Category struct {
-	ID        int       `db:"id"`
-	Name      string    `db:"name"`
-	CreatedAt time.Time `db:"created_at"`
-	UpdatedAt time.Time `db:"updated_at"`
+	Identity *models.Identity
 }
 
-func NewCategoryService(c *gin.Context) *CategoryService {
-	return &CategoryService{
+func NewCategory(c *gin.Context) *Category {
+	return &Category{
 		Identity: rbac.GetIdentity(c),
 	}
 }
 
-func (c *CategoryService) GetAll() ([]Category, error) {
+func (c *Category) GetAll() ([]models.Category, error) {
 	defer yiigo.Flush()
 
-	data := []Category{}
+	data := []models.Category{}
 
-	err := yiigo.DB.Select(&data, "SELECT * FROM go_category ORDER BY updated_at DESC")
+	query := "SELECT * FROM go_category ORDER BY updated_at DESC"
+	err := yiigo.DB.Select(&data, query)
 
 	if err != nil && err != sql.ErrNoRows {
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s", err.Error(), query)
 	}
 
 	return data, err
 }
 
-func (c *CategoryService) GetDetail(id int) (*Category, error) {
+func (c *Category) GetDetail(id int) (*models.Category, error) {
 	defer yiigo.Flush()
 
-	data := &Category{}
+	data := &models.Category{}
 
-	err := yiigo.DB.Get(data, "SELECT * FROM go_category WHERE id = ?", id)
+	query := "SELECT * FROM go_category WHERE id = ?"
+	err := yiigo.DB.Get(data, query, id)
 
 	if err != nil && err != sql.ErrNoRows {
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: [%d]", err.Error(), query, id)
 	}
 
 	return data, err
 }
 
-func (c *CategoryService) Add(data yiigo.X) (int64, error) {
+func (c *Category) Add(data yiigo.X) (int64, error) {
 	defer yiigo.Flush()
 
 	data["created_at"] = time.Now()
@@ -64,7 +60,7 @@ func (c *CategoryService) Add(data yiigo.X) (int64, error) {
 	r, err := yiigo.DB.Exec(sql, binds...)
 
 	if err != nil {
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: %v", err.Error(), sql, binds)
 
 		return 0, err
 	}
@@ -74,7 +70,7 @@ func (c *CategoryService) Add(data yiigo.X) (int64, error) {
 	return id, err
 }
 
-func (c *CategoryService) Edit(id int, data yiigo.X) error {
+func (c *Category) Edit(id int, data yiigo.X) error {
 	defer yiigo.Flush()
 
 	data["updated_at"] = time.Now()
@@ -84,7 +80,7 @@ func (c *CategoryService) Edit(id int, data yiigo.X) error {
 	_, err := yiigo.DB.Exec(sql, binds...)
 
 	if err != nil {
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: %v", err.Error(), sql, binds)
 
 		return err
 	}
@@ -92,7 +88,7 @@ func (c *CategoryService) Edit(id int, data yiigo.X) error {
 	return err
 }
 
-func (c *CategoryService) Delete(id int) error {
+func (c *Category) Delete(id int) error {
 	defer yiigo.Flush()
 
 	tx, err := yiigo.DB.Beginx()
@@ -103,38 +99,42 @@ func (c *CategoryService) Delete(id int) error {
 		return err
 	}
 
-	_, err = tx.Exec("DELETE FROM go_history WHERE category_id = ?", id)
+	sql := "DELETE FROM go_history WHERE category_id = ?"
+	_, err = tx.Exec(sql, id)
 
 	if err != nil {
 		tx.Rollback()
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: [%d]", err.Error(), sql, id)
 
 		return err
 	}
 
-	_, err = tx.Exec("DELETE FROM go_doc WHERE category_id = ?", id)
+	sql = "DELETE FROM go_doc WHERE category_id = ?"
+	_, err = tx.Exec(sql, id)
 
 	if err != nil {
 		tx.Rollback()
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: [%d]", err.Error(), sql, id)
 
 		return err
 	}
 
-	_, err = tx.Exec("DELETE FROM go_project WHERE category_id = ?", id)
+	sql = "DELETE FROM go_project WHERE category_id = ?"
+	_, err = tx.Exec(sql, id)
 
 	if err != nil {
 		tx.Rollback()
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: [%d]", err.Error(), sql, id)
 
 		return err
 	}
 
-	_, err = tx.Exec("DELETE FROM go_category WHERE id = ?", id)
+	sql = "DELETE FROM go_category WHERE id = ?"
+	_, err = tx.Exec(sql, id)
 
 	if err != nil {
 		tx.Rollback()
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: [%d]", err.Error(), sql, id)
 
 		return err
 	}

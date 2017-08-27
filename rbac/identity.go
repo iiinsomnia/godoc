@@ -2,6 +2,7 @@ package rbac
 
 import (
 	"encoding/json"
+	"godoc/models"
 	"godoc/session"
 	"math/rand"
 	"strings"
@@ -17,17 +18,6 @@ var Roles = map[int]string{
 	3: "超级用户",
 }
 
-type Identity struct {
-	ID            int       `db:"id" json:"id"`
-	Name          string    `db:"name" json:"name"`
-	Email         string    `db:"email" json:"email"`
-	Password      string    `db:"password" json:"password"`
-	Salt          string    `db:"salt" json:"salt"`
-	Role          int       `db:"role" json:"role"`
-	LastLoginIP   string    `db:"last_login_ip" json:"last_login_ip"`
-	LastLoginTime time.Time `db:"last_login_time" json:"last_login_time"`
-}
-
 // GetRoleName 获取角色名称
 func GetRoleName(role int) string {
 	if v, ok := Roles[role]; ok {
@@ -38,8 +28,8 @@ func GetRoleName(role int) string {
 }
 
 // GetIdentity 获取用户登录信息
-func GetIdentity(c *gin.Context) *Identity {
-	identity := &Identity{}
+func GetIdentity(c *gin.Context) *models.Identity {
+	identity := &models.Identity{}
 
 	loginData, err := session.Get(c, "identity")
 
@@ -66,7 +56,7 @@ func IsGuest(c *gin.Context) bool {
 }
 
 // SignIn 用户登录
-func SignIn(c *gin.Context, identity *Identity, duration ...int) bool {
+func SignIn(c *gin.Context, identity *models.Identity, duration ...int) bool {
 	loginIP := c.ClientIP()
 	loginTime := time.Now()
 

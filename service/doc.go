@@ -2,6 +2,7 @@ package service
 
 import (
 	"database/sql"
+	"godoc/models"
 	"godoc/rbac"
 	"time"
 
@@ -9,60 +10,47 @@ import (
 	"github.com/iiinsomnia/yiigo"
 )
 
-type DocService struct {
-	Identity *rbac.Identity
-}
-
 type Doc struct {
-	ID           int       `db:"id"`
-	Title        string    `db:"title"`
-	CategoryID   int       `db:"category_id"`
-	CategoryName string    `db:"category_name"`
-	ProjectID    int       `db:"project_id"`
-	ProjectName  string    `db:"project_name"`
-	Label        string    `db:"label"`
-	Markdown     string    `db:"markdown"`
-	CreatedAt    time.Time `db:"created_at"`
-	UpdatedAt    time.Time `db:"updated_at"`
+	Identity *models.Identity
 }
 
-func NewDocService(c *gin.Context) *DocService {
-	return &DocService{
+func NewDoc(c *gin.Context) *Doc {
+	return &Doc{
 		Identity: rbac.GetIdentity(c),
 	}
 }
 
-func (d *DocService) GetDocs(projectID int) ([]Doc, error) {
+func (d *Doc) GetDocs(projectID int) ([]models.Doc, error) {
 	defer yiigo.Flush()
 
-	data := []Doc{}
+	data := []models.Doc{}
 
 	query := "SELECT * FROM go_doc WHERE project_id = ? ORDER BY updated_at DESC"
 	err := yiigo.DB.Select(&data, query, projectID)
 
 	if err != nil && err != sql.ErrNoRows {
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: [%d]", err.Error(), query, projectID)
 	}
 
 	return data, err
 }
 
-func (d *DocService) GetDetail(id int) (*Doc, error) {
+func (d *Doc) GetDetail(id int) (*models.Doc, error) {
 	defer yiigo.Flush()
 
-	data := &Doc{}
+	data := &models.Doc{}
 
 	query := "SELECT a.*, b.name AS category_name, c.name AS project_name FROM go_doc AS a LEFT JOIN go_category AS b ON a.category_id = b.id LEFT JOIN go_project AS c ON a.project_id = c.id WHERE a.id = ?"
 	err := yiigo.DB.Get(data, query, id)
 
 	if err != nil && err != sql.ErrNoRows {
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: [%d]", err.Error(), query, id)
 	}
 
 	return data, err
 }
 
-func (d *DocService) Add(data yiigo.X, history yiigo.X) (int64, error) {
+func (d *Doc) Add(data yiigo.X, history yiigo.X) (int64, error) {
 	defer yiigo.Flush()
 
 	data["created_at"] = time.Now()
@@ -81,7 +69,7 @@ func (d *DocService) Add(data yiigo.X, history yiigo.X) (int64, error) {
 
 	if err != nil {
 		tx.Rollback()
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: %v", err.Error(), sql, binds)
 
 		return 0, err
 	}
@@ -99,7 +87,7 @@ func (d *DocService) Add(data yiigo.X, history yiigo.X) (int64, error) {
 
 	if err != nil {
 		tx.Rollback()
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: %v", err.Error(), sql, binds)
 
 		return 0, err
 	}
@@ -109,10 +97,10 @@ func (d *DocService) Add(data yiigo.X, history yiigo.X) (int64, error) {
 	return id, nil
 }
 
-func (d *DocService) Edit(id int, data yiigo.X) error {
+func (d *Doc) Edit(id int, data yiigo.X) error {
 	defer yiigo.Flush()
 
-	doc := &Doc{}
+	doc := &models.Doc{}
 	err := yiigo.DB.Get(doc, "SELECT id FROM go_doc WHERE id = ?", id)
 
 	if err != nil {
@@ -132,7 +120,7 @@ func (d *DocService) Edit(id int, data yiigo.X) error {
 
 	if err != nil {
 		tx.Rollback()
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: %v", err.Error(), sql, binds)
 
 		return err
 	}
@@ -153,7 +141,7 @@ func (d *DocService) Edit(id int, data yiigo.X) error {
 
 	if err != nil {
 		tx.Rollback()
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: %v", err.Error(), sql, binds)
 
 		return err
 	}
@@ -163,7 +151,7 @@ func (d *DocService) Edit(id int, data yiigo.X) error {
 	return nil
 }
 
-func (c *DocService) Delete(id int) error {
+func (c *Doc) Delete(id int) error {
 	defer yiigo.Flush()
 
 	tx, err := yiigo.DB.Beginx()
@@ -174,20 +162,22 @@ func (c *DocService) Delete(id int) error {
 		return err
 	}
 
-	_, err = tx.Exec("DELETE FROM go_history WHERE doc_id = ?", id)
+	sql := "DELETE FROM go_history WHERE doc_id = ?"
+	_, err = tx.Exec(sql, id)
 
 	if err != nil {
 		tx.Rollback()
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: [%d]", err.Error(), sql, id)
 
 		return err
 	}
 
-	_, err = tx.Exec("DELETE FROM go_doc WHERE id = ?", id)
+	sql = "DELETE FROM go_doc WHERE id = ?"
+	_, err = tx.Exec(sql, id)
 
 	if err != nil {
 		tx.Rollback()
-		yiigo.Err(err.Error())
+		yiigo.Errf("%s, SQL: %s, Args: [%d]", err.Error(), sql, id)
 
 		return err
 	}
