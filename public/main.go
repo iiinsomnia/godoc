@@ -17,19 +17,23 @@ func main() {
 	numCPU := runtime.NumCPU()
 	runtime.GOMAXPROCS(numCPU)
 
-	bootstrap()
+	err := yiigo.Bootstrap(true, false, false)
+
+	if err != nil {
+		yiigo.Err(err.Error())
+	}
+
 	loadStaticResource()
 
-	version := yiigo.GetEnvString("app", "version", "1.0.0")
-	fmt.Println("app start, version", version)
+	fmt.Println("app start, version", yiigo.EnvString("app", "version", "1.0.0"))
 
 	run()
 }
 
 // load static resource
 func loadStaticResource() {
-	assets.LoadAssets()
-	views.LoadViews()
+	assets.LoadAssets("../assets")
+	views.LoadViews("../views")
 }
 
 // load routes
@@ -41,24 +45,10 @@ func loadRoutes(r *gin.Engine) {
 	routes.LoadDocRoutes(r)
 }
 
-func bootstrap() {
-	b := yiigo.New()
-
-	// b.EnableMongo()
-	// b.EnableRedis()
-
-	err := b.Bootstrap()
-
-	if err != nil {
-		yiigo.LogError(err.Error())
-	}
-}
-
 func run() {
-	debug := yiigo.GetEnvBool("app", "debug", false)
 	mode := gin.ReleaseMode
 
-	if debug {
+	if yiigo.EnvBool("app", "debug", false) {
 		mode = gin.DebugMode
 	}
 
@@ -67,9 +57,9 @@ func run() {
 	r := gin.New()
 	r.Use(middlewares.ErrorMiddleware())
 
-	r.StaticFS("/assets", assets.Asset.HTTPBox())
+	r.StaticFS("/assets", assets.AssetBox.HTTPBox())
 	r.StaticFile("/favicon.ico", "./favicon.ico")
 	// r.LoadHTMLGlob("../views/**/**/*")
 	loadRoutes(r)
-	r.Run(fmt.Sprintf(":%d", yiigo.GetEnvInt("app", "port", 8000)))
+	r.Run(fmt.Sprintf(":%d", yiigo.EnvInt("app", "port", 8000)))
 }

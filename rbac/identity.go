@@ -2,7 +2,6 @@ package rbac
 
 import (
 	"encoding/json"
-	"godoc/dao/mysql"
 	"godoc/session"
 	"math/rand"
 	"strings"
@@ -48,7 +47,7 @@ func GetIdentity(c *gin.Context) *Identity {
 		err = json.Unmarshal(loginData.([]byte), identity)
 
 		if err != nil {
-			yiigo.LogError(err.Error())
+			yiigo.Err(err.Error())
 		}
 	}
 
@@ -71,11 +70,12 @@ func SignIn(c *gin.Context, identity *Identity, duration ...int) bool {
 	loginIP := c.ClientIP()
 	loginTime := time.Now()
 
-	userDao := mysql.NewUserDao()
-	userDao.UpdateByID(identity.ID, yiigo.X{
+	sql, binds := yiigo.UpdateSQL("UPDATE go_user SET ? WHERE id = ?", yiigo.X{
 		"last_login_ip":   loginIP,
 		"last_login_time": loginTime,
-	})
+	}, identity.ID)
+
+	yiigo.DB.Exec(sql, binds...)
 
 	identity.LastLoginIP = loginIP
 	identity.LastLoginTime = loginTime
@@ -83,7 +83,7 @@ func SignIn(c *gin.Context, identity *Identity, duration ...int) bool {
 	loginData, err := json.Marshal(identity)
 
 	if err != nil {
-		yiigo.LogError(err.Error())
+		yiigo.Err(err.Error())
 
 		return false
 	}

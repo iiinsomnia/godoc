@@ -1,14 +1,16 @@
 package service
 
 import (
-	"godoc/dao/mysql"
+	"database/sql"
+	"godoc/rbac"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/iiinsomnia/yiigo"
 )
 
 type HistoryService struct {
-	*service
+	Identity *rbac.Identity
 }
 
 type History struct {
@@ -21,15 +23,21 @@ type History struct {
 
 func NewHistoryService(c *gin.Context) *HistoryService {
 	return &HistoryService{
-		construct(c),
+		Identity: rbac.GetIdentity(c),
 	}
 }
 
-func (p *HistoryService) GetHistory(docID int) ([]History, error) {
+func (h *HistoryService) GetHistory(docID int) ([]History, error) {
+	defer yiigo.Flush()
+
 	data := []History{}
 
-	historyDao := mysql.NewHistoryDao()
-	err := historyDao.GetByDocID(docID, &data)
+	query := "SELECT a.id, a.flag, a.created_at, a.updated_at, b.name AS username FROM go_history AS a LEFT JOIN go_user AS b ON a.user_id = b.id WHERE doc_id = ? ORDER BY a.id DESC"
+	err := yiigo.DB.Select(&data, query, docID)
+
+	if err != nil && err != sql.ErrNoRows {
+		yiigo.Err(err.Error())
+	}
 
 	return data, err
 }

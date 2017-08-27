@@ -1,7 +1,8 @@
 package service
 
 import (
-	"godoc/dao/mysql"
+	"database/sql"
+	"godoc/rbac"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -9,7 +10,7 @@ import (
 )
 
 type ProjectService struct {
-	*service
+	Identity *rbac.Identity
 }
 
 type Project struct {
@@ -24,45 +25,114 @@ type Project struct {
 
 func NewProjectService(c *gin.Context) *ProjectService {
 	return &ProjectService{
-		construct(c),
+		Identity: rbac.GetIdentity(c),
 	}
 }
 
 func (p *ProjectService) GetProjects(categoryID int) ([]Project, error) {
+	defer yiigo.Flush()
+
 	data := []Project{}
 
-	projectDao := mysql.NewProjectDao()
-	err := projectDao.GetByCategoryID(categoryID, &data)
+	err := yiigo.DB.Select(&data, "SELECT * FROM go_project WHERE category_id = ? ORDER BY updated_at DESC", categoryID)
+
+	if err != nil && err != sql.ErrNoRows {
+		yiigo.Err(err.Error())
+	}
 
 	return data, err
 }
 
 func (p *ProjectService) GetDetail(id int) (*Project, error) {
+	defer yiigo.Flush()
+
 	data := &Project{}
 
-	projectDao := mysql.NewProjectDao()
-	err := projectDao.GetByID(id, data)
+	query := "SELECT a.*, b.name AS category_name FROM go_project AS a LEFT JOIN go_category AS b ON a.category_id = b.id WHERE a.id = ?"
+	err := yiigo.DB.Get(data, query, id)
+
+	if err != nil && err != sql.ErrNoRows {
+		yiigo.Err(err.Error())
+	}
 
 	return data, err
 }
 
 func (p *ProjectService) Add(data yiigo.X) (int64, error) {
-	projectDao := mysql.NewProjectDao()
-	id, err := projectDao.AddNewRecord(data)
+	defer yiigo.Flush()
 
-	return id, err
+	data["created_at"] = time.Now()
+	data["updated_at"] = time.Now()
+
+	sql, binds := yiigo.InsertSQL("go_project", data)
+	r, err := yiigo.DB.Exec(sql, binds...)
+
+	if err != nil {
+		yiigo.Err(err.Error())
+
+		return 0, err
+	}
+
+	id, _ := r.LastInsertId()
+
+	return id, nil
 }
 
 func (p *ProjectService) Edit(id int, data yiigo.X) error {
-	projectDao := mysql.NewProjectDao()
-	err := projectDao.UpdateByID(id, data)
+	defer yiigo.Flush()
+
+	data["updated_at"] = time.Now()
+
+	sql, binds := yiigo.UpdateSQL("UPDATE go_project SET ? WHERE id = ?", data, id)
+
+	_, err := yiigo.DB.Exec(sql, binds...)
+
+	if err != nil {
+		yiigo.Err(err.Error())
+	}
 
 	return err
 }
 
-func (p *ProjectService) Delete(id int) error {
-	projectDao := mysql.NewProjectDao()
-	err := projectDao.DeleteByID(id)
+func (c *ProjectService) Delete(id int) error {
+	defer yiigo.Flush()
 
-	return err
+	tx, err := yiigo.DB.Beginx()
+
+	if err != nil {
+		yiigo.Err(err.Error())
+
+		return err
+	}
+
+	_, err = tx.Exec("DELETE FROM go_history WHERE category_id = ?", id)
+
+	if err != nil {
+		tx.Rollback()
+		yiigo.Err(err.Error())
+
+		return err
+	}
+
+	_, err = tx.Exec("DELETE FROM go_doc WHERE category_id = ?", id)
+
+	if err != nil {
+		tx.Rollback()
+		yiigo.Err(err.Error())
+
+		return err
+	}
+
+	_, err = tx.Exec("DELETE FROM go_project WHERE id = ?", id)
+
+	if err != nil {
+		tx.Rollback()
+		yiigo.Err(err.Error())
+
+		return err
+	}
+
+	tx.Commit()
+
+	return nil
 }

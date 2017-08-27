@@ -1,27 +1,26 @@
 <seelog>
-    <outputs formatid="main">
-        <filter levels="debug,info,warn,error,critical">
-            <console />
+    <outputs>
+        <filter levels="debug">
+            <console formatid="debug"/>
         </filter>
         <filter levels="info">
-            <rollingfile type="date" filename="logs/info.log" datepattern="2006-01-02" namemode="prefix" maxrolls="1" archivetype="none"/>
+            <console formatid="info"/>
         </filter>
         <filter levels="warn">
-            <rollingfile type="date" filename="logs/warn.log" datepattern="2006-01-02" namemode="prefix" maxrolls="1" archivetype="none"/>
+            <console formatid="warn"/>
         </filter>
         <filter levels="error">
-            <rollingfile type="date" filename="logs/error.log" datepattern="2006-01-02" namemode="prefix" maxrolls="1" archivetype="none"/>
+            <console formatid="error"/>
         </filter>
         <filter levels="critical">
-            <rollingfile type="date" filename="logs/critical.log" datepattern="2006-01-02" namemode="prefix" maxrolls="1" archivetype="none"/>
+            <console formatid="critical"/>
         </filter>
-        <!-- <filter levels="error,critical">
-            <smtp senderaddress="demo@example.com" sendername="demo" hostname="smtp.example.com" hostport="25" username="demo@example.com" password="secret">
-                <recipient address="demo@example.com"/>
-            </smtp>
-        </filter> -->
     </outputs>
     <formats>
-        <format id="main" format="[%Date %Time] [%LEV] %Msg%n"/>
+        <format id="debug" format="%EscM(36)[%Date %Time] [%LEV] %Msg%n%EscM(36)"/>
+        <format id="info" format="%EscM(32)[%Date %Time] [%LEV] %Msg%n%EscM(32)"/>
+        <format id="warn" format="%EscM(33)[%Date %Time] [%LEV] %Msg%n%EscM(33)"/>
+        <format id="error" format="%EscM(31)[%Date %Time] [%LEV] %Msg%n%EscM(31)"/>
+        <format id="critical" format="%EscM(35)[%Date %Time] [%LEV] %Msg%n%EscM(35)"/>
     </formats>
 </seelog>

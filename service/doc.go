@@ -1,7 +1,8 @@
 package service
 
 import (
-	"godoc/dao/mysql"
+	"database/sql"
+	"godoc/rbac"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -9,7 +10,7 @@ import (
 )
 
 type DocService struct {
-	*service
+	Identity *rbac.Identity
 }
 
 type Doc struct {
@@ -27,77 +28,171 @@ type Doc struct {
 
 func NewDocService(c *gin.Context) *DocService {
 	return &DocService{
-		construct(c),
+		Identity: rbac.GetIdentity(c),
 	}
 }
 
 func (d *DocService) GetDocs(projectID int) ([]Doc, error) {
+	defer yiigo.Flush()
+
 	data := []Doc{}
 
-	docDao := mysql.NewDocDao()
-	err := docDao.GetByProjectID(projectID, &data)
+	query := "SELECT * FROM go_doc WHERE project_id = ? ORDER BY updated_at DESC"
+	err := yiigo.DB.Select(&data, query, projectID)
+
+	if err != nil && err != sql.ErrNoRows {
+		yiigo.Err(err.Error())
+	}
 
 	return data, err
 }
 
 func (d *DocService) GetDetail(id int) (*Doc, error) {
+	defer yiigo.Flush()
+
 	data := &Doc{}
 
-	docDao := mysql.NewDocDao()
-	err := docDao.GetByID(id, data)
+	query := "SELECT a.*, b.name AS category_name, c.name AS project_name FROM go_doc AS a LEFT JOIN go_category AS b ON a.category_id = b.id LEFT JOIN go_project AS c ON a.project_id = c.id WHERE a.id = ?"
+	err := yiigo.DB.Get(data, query, id)
+
+	if err != nil && err != sql.ErrNoRows {
+		yiigo.Err(err.Error())
+	}
 
 	return data, err
 }
 
 func (d *DocService) Add(data yiigo.X, history yiigo.X) (int64, error) {
-	docDao := mysql.NewDocDao()
-	id, err := docDao.AddNewRecord(data)
+	defer yiigo.Flush()
 
-	if err == nil {
-		historyDao := mysql.NewHistoryDao()
+	data["created_at"] = time.Now()
+	data["updated_at"] = time.Now()
 
-		history["user_id"] = d.Identity.ID
-		history["doc_id"] = id
-		history["flag"] = 1
+	tx, err := yiigo.DB.Beginx()
 
-		historyDao.AddNewRecord(history)
+	if err != nil {
+		yiigo.Err(err.Error())
+
+		return 0, err
 	}
 
-	return id, err
+	sql, binds := yiigo.InsertSQL("go_doc", data)
+	r, err := yiigo.DB.Exec(sql, binds...)
+
+	if err != nil {
+		tx.Rollback()
+		yiigo.Err(err.Error())
+
+		return 0, err
+	}
+
+	id, _ := r.LastInsertId()
+
+	// 记录操作历史
+	history["user_id"] = d.Identity.ID
+	history["doc_id"] = id
+	history["flag"] = 1
+	history["updated_at"] = time.Now()
+
+	sql, binds = yiigo.InsertSQL("go_history", history)
+	_, err = yiigo.DB.Exec(sql, binds...)
+
+	if err != nil {
+		tx.Rollback()
+		yiigo.Err(err.Error())
+
+		return 0, err
+	}
+
+	tx.Commit()
+
+	return id, nil
 }
 
 func (d *DocService) Edit(id int, data yiigo.X) error {
-	docDao := mysql.NewDocDao()
+	defer yiigo.Flush()
 
 	doc := &Doc{}
-	err := docDao.GetByID(id, doc)
+	err := yiigo.DB.Get(doc, "SELECT id FROM go_doc WHERE id = ?", id)
 
 	if err != nil {
 		return err
 	}
 
-	err = docDao.UpdateByID(id, data)
+	tx, err := yiigo.DB.Beginx()
 
-	if err == nil {
-		historyDao := mysql.NewHistoryDao()
+	if err != nil {
+		yiigo.Err(err.Error())
 
-		history := yiigo.X{
-			"user_id":     d.Identity.ID,
-			"category_id": doc.CategoryID,
-			"project_id":  doc.ProjectID,
-			"doc_id":      id,
-			"flag":        2,
-		}
-
-		historyDao.AddNewRecord(history)
+		return err
 	}
 
-	return err
+	sql, binds := yiigo.UpdateSQL("UPDATE go_doc SET ? WHERE id = ?", data, id)
+	_, err = tx.Exec(sql, binds...)
+
+	if err != nil {
+		tx.Rollback()
+		yiigo.Err(err.Error())
+
+		return err
+	}
+
+	// 记录操作历史
+	history := yiigo.X{
+		"user_id":     d.Identity.ID,
+		"category_id": doc.CategoryID,
+		"project_id":  doc.ProjectID,
+		"doc_id":      id,
+		"flag":        2,
+		"created_at":  time.Now(),
+		"updated_at":  time.Now(),
+	}
+
+	sql, binds = yiigo.InsertSQL("go_history", history)
+	_, err = tx.Exec(sql, binds...)
+
+	if err != nil {
+		tx.Rollback()
+		yiigo.Err(err.Error())
+
+		return err
+	}
+
+	tx.Commit()
+
+	return nil
 }
 
-func (d *DocService) Delete(id int) error {
-	docDao := mysql.NewDocDao()
-	err := docDao.DeleteByID(id)
+func (c *DocService) Delete(id int) error {
+	defer yiigo.Flush()
 
-	return err
+	tx, err := yiigo.DB.Beginx()
+
+	if err != nil {
+		yiigo.Err(err.Error())
+
+		return err
+	}
+
+	_, err = tx.Exec("DELETE FROM go_history WHERE doc_id = ?", id)
+
+	if err != nil {
+		tx.Rollback()
+		yiigo.Err(err.Error())
+
+		return err
+	}
+
+	_, err = tx.Exec("DELETE FROM go_doc WHERE id = ?", id)
+
+	if err != nil {
+		tx.Rollback()
+		yiigo.Err(err.Error())
+
+		return err
+	}
+
+	tx.Commit()
+
+	return nil
 }

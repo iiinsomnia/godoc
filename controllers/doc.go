@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"database/sql"
 	"fmt"
 	"godoc/i18n"
 	"godoc/params"
@@ -36,16 +37,15 @@ func (d *DocController) View(c *gin.Context) {
 	_id, _ := strconv.Atoi(id)
 
 	docService := service.NewDocService(c)
-
 	doc, err := docService.GetDetail(_id)
 
 	if err != nil {
-		if err.Error() == "not found" {
-			d.renderError(c, 404, "项目不存在")
+		if err == sql.ErrNoRows {
+			d.V(c).RenderErr(404, "项目不存在")
 			return
 		}
 
-		d.renderError(c, 500, "数据获取失败")
+		d.V(c).RenderErr(500, "数据获取失败")
 
 		return
 	}
@@ -55,10 +55,10 @@ func (d *DocController) View(c *gin.Context) {
 	historyService := service.NewHistoryService(c)
 	history, _ := historyService.GetHistory(_id)
 
-	d.addFuncs(template.FuncMap{
+	d.V(c).F(template.FuncMap{
 		"explode":        strings.Split,
 		"getHistoryFlag": params.GetHistoryFlag,
-	}).render(c, "view", gin.H{
+	}).Render("view", gin.H{
 		"doc":     doc,
 		"docs":    docs,
 		"history": history,
@@ -69,7 +69,7 @@ func (d *DocController) Add(c *gin.Context) {
 	identity := rbac.GetIdentity(c)
 
 	if identity.Role == 1 {
-		d.renderError(c, 403, "无操作权限")
+		d.V(c).RenderErr(403, "无操作权限")
 		return
 	}
 
@@ -80,12 +80,12 @@ func (d *DocController) Add(c *gin.Context) {
 	project, err := projectService.GetDetail(_projectID)
 
 	if err != nil {
-		if err.Error() == "not found" {
-			d.renderError(c, 404, "项目不存在")
+		if err == sql.ErrNoRows {
+			d.V(c).RenderErr(404, "项目不存在")
 			return
 		}
 
-		d.renderError(c, 500, "数据获取失败")
+		d.V(c).RenderErr(500, "数据获取失败")
 
 		return
 	}
@@ -94,7 +94,7 @@ func (d *DocController) Add(c *gin.Context) {
 		docService := service.NewDocService(c)
 		docs, _ := docService.GetDocs(_projectID)
 
-		d.render(c, "add", gin.H{
+		d.V(c).Render("add", gin.H{
 			"project": project,
 			"docs":    docs,
 		})
@@ -106,7 +106,7 @@ func (d *DocController) Add(c *gin.Context) {
 
 	if validate := c.ShouldBindWith(form, binding.Form); validate != nil {
 		errors := strings.Split(validate.Error(), "\n")
-		d.json(c, false, i18n.I18NSlice(errors))
+		d.JSON(c, false, i18n.I18NSlice(errors))
 
 		return
 	}
@@ -128,18 +128,18 @@ func (d *DocController) Add(c *gin.Context) {
 	id, err := docService.Add(data, history)
 
 	if err != nil {
-		d.json(c, false, "添加失败")
+		d.JSON(c, false, "添加失败")
 		return
 	}
 
-	d.json(c, true, "添加成功", nil, fmt.Sprintf("/docs/view/%d", id))
+	d.JSON(c, true, "添加成功", nil, fmt.Sprintf("/docs/view/%d", id))
 }
 
 func (d *DocController) Edit(c *gin.Context) {
 	identity := rbac.GetIdentity(c)
 
 	if identity.Role == 1 {
-		d.renderError(c, 403, "无操作权限")
+		d.V(c).RenderErr(403, "无操作权限")
 		return
 	}
 
@@ -152,19 +152,19 @@ func (d *DocController) Edit(c *gin.Context) {
 		doc, err := docService.GetDetail(_id)
 
 		if err != nil {
-			if err.Error() == "not found" {
-				d.renderError(c, 404, "文档不存在")
+			if err == sql.ErrNoRows {
+				d.V(c).RenderErr(404, "文档不存在")
 				return
 			}
 
-			d.renderError(c, 500, "数据获取失败")
+			d.V(c).RenderErr(500, "数据获取失败")
 
 			return
 		}
 
 		docs, _ := docService.GetDocs(doc.ProjectID)
 
-		d.render(c, "edit", gin.H{
+		d.V(c).Render("edit", gin.H{
 			"doc":  doc,
 			"docs": docs,
 		})
@@ -176,7 +176,7 @@ func (d *DocController) Edit(c *gin.Context) {
 
 	if validate := c.ShouldBindWith(form, binding.Form); validate != nil {
 		errors := strings.Split(validate.Error(), "\n")
-		d.json(c, false, i18n.I18NSlice(errors))
+		d.JSON(c, false, i18n.I18NSlice(errors))
 
 		return
 	}
@@ -190,18 +190,18 @@ func (d *DocController) Edit(c *gin.Context) {
 	err := docService.Edit(_id, data)
 
 	if err != nil {
-		d.json(c, false, "编辑失败")
+		d.JSON(c, false, "编辑失败")
 		return
 	}
 
-	d.json(c, true, "编辑成功", nil, fmt.Sprintf("/docs/view/%s", id))
+	d.JSON(c, true, "编辑成功", nil, fmt.Sprintf("/docs/view/%s", id))
 }
 
 func (d *DocController) Delete(c *gin.Context) {
 	identity := rbac.GetIdentity(c)
 
 	if identity.Role != 3 {
-		d.renderError(c, 403, "无操作权限")
+		d.V(c).RenderErr(403, "无操作权限")
 		return
 	}
 
@@ -212,12 +212,12 @@ func (d *DocController) Delete(c *gin.Context) {
 	doc, err := docService.GetDetail(_id)
 
 	if err != nil {
-		if err.Error() == "not found" {
-			d.json(c, false, "文档不存在")
+		if err == sql.ErrNoRows {
+			d.JSON(c, false, "文档不存在")
 			return
 		}
 
-		d.json(c, false, "删除失败")
+		d.JSON(c, false, "删除失败")
 
 		return
 	}
@@ -225,9 +225,9 @@ func (d *DocController) Delete(c *gin.Context) {
 	err = docService.Delete(_id)
 
 	if err != nil {
-		d.json(c, false, "删除失败")
+		d.JSON(c, false, "删除失败")
 		return
 	}
 
-	d.json(c, true, "删除成功", nil, fmt.Sprintf("/projects/view/%d", doc.ProjectID))
+	d.JSON(c, true, "删除成功", nil, fmt.Sprintf("/projects/view/%d", doc.ProjectID))
 }

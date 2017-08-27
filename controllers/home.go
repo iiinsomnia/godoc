@@ -36,7 +36,7 @@ func (h *HomeController) Index(c *gin.Context) {
 	categoryService := service.NewCategoryService(c)
 	categories, _ := categoryService.GetAll()
 
-	h.render(c, "index", gin.H{
+	h.V(c).Render("index", gin.H{
 		"os":         runtime.GOOS,
 		"cpu":        runtime.NumCPU(),
 		"arch":       runtime.GOARCH,
@@ -49,11 +49,11 @@ func (h *HomeController) Index(c *gin.Context) {
 func (h *HomeController) Login(c *gin.Context) {
 	if c.Request.Method == "GET" {
 		if !rbac.IsGuest(c) {
-			h.redirect(c, "/")
+			h.Redirect(c, "/")
 			return
 		}
 
-		h.layout("normal").render(c, "login", gin.H{
+		h.V(c).L("normal").Render("login", gin.H{
 			"captchaID": captcha.NewLen(5),
 		})
 
@@ -64,7 +64,7 @@ func (h *HomeController) Login(c *gin.Context) {
 
 	if validate := c.ShouldBindWith(form, binding.Form); validate != nil {
 		errors := strings.Split(validate.Error(), "\n")
-		h.json(c, false, i18n.I18NSlice(errors))
+		h.JSON(c, false, i18n.I18NSlice(errors))
 
 		return
 	}
@@ -72,7 +72,7 @@ func (h *HomeController) Login(c *gin.Context) {
 	captchaID := c.Param("captchaID")
 
 	if !captcha.VerifyString(captchaID, form.Captcha) {
-		h.json(c, false, "验证码错误", nil, "/login")
+		h.JSON(c, false, "验证码错误", nil, "/login")
 		return
 	}
 
@@ -80,16 +80,16 @@ func (h *HomeController) Login(c *gin.Context) {
 	err := authService.Login(c, form.Account, form.Password)
 
 	if err != nil {
-		h.json(c, false, err.Error(), nil, "/login")
+		h.JSON(c, false, err.Error(), nil, "/login")
 		return
 	}
 
-	h.json(c, true, "登录成功", nil, "/")
+	h.JSON(c, true, "登录成功", nil, "/")
 }
 
 func (h *HomeController) Logout(c *gin.Context) {
 	session.Destroy(c)
-	h.redirect(c, "/login")
+	h.Redirect(c, "/login")
 }
 
 func (h *HomeController) Captcha(c *gin.Context) {
@@ -99,14 +99,14 @@ func (h *HomeController) Captcha(c *gin.Context) {
 	err := captcha.WriteImage(c.Writer, id, 120, 34)
 
 	if err != nil {
-		yiigo.LogError(err.Error)
+		yiigo.Err(err.Error)
 	}
 }
 
 func (h *HomeController) NotFound(c *gin.Context) {
-	h.renderError(c, 404, "Page Not Found.")
+	h.V(c).RenderErr(404, "Page Not Found.")
 }
 
 func (h *HomeController) InternalServerError(c *gin.Context) {
-	h.renderError(c, 500, "Internal Server Error.")
+	h.V(c).RenderErr(500, "Internal Server Error.")
 }

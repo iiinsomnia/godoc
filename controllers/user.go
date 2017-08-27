@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"database/sql"
 	"godoc/helpers"
 	"godoc/i18n"
 	"godoc/params"
@@ -40,7 +41,7 @@ func (u *UserController) Index(c *gin.Context) {
 	identity := rbac.GetIdentity(c)
 
 	if identity.Role != 3 {
-		u.renderError(c, 403, "无操作权限")
+		u.V(c).RenderErr(403, "无操作权限")
 		return
 	}
 
@@ -49,15 +50,15 @@ func (u *UserController) Index(c *gin.Context) {
 	userService := service.NewUserService(c)
 	count, curPage, totalPage, data, err := userService.GetUserList(query)
 
-	if err != nil {
-		u.renderError(c, 500, "数据获取失败")
+	if err != nil && err != sql.ErrNoRows {
+		u.V(c).RenderErr(500, "数据获取失败")
 		return
 	}
 
-	u.addFuncs(template.FuncMap{
+	u.V(c).F(template.FuncMap{
 		"int":               helpers.Int,
 		"httpBuildQueryUrl": helpers.HttpBuildQueryUrl,
-	}).addTpls("layouts/pagination").render(c, "index", gin.H{
+	}).T("layouts/pagination").Render("index", gin.H{
 		"count":     count,
 		"totalPage": totalPage,
 		"query":     query,
@@ -78,15 +79,15 @@ func (u *UserController) Add(c *gin.Context) {
 	identity := rbac.GetIdentity(c)
 
 	if identity.Role != 3 {
-		u.renderError(c, 403, "无操作权限")
+		u.V(c).RenderErr(403, "无操作权限")
 		return
 	}
 
 	if c.Request.Method == "GET" {
-		u.addFuncs(template.FuncMap{
+		u.V(c).F(template.FuncMap{
 			"roleDesc": params.RoleDesc,
-		}).render(c, "add", gin.H{
-			"defaultPass": yiigo.GetEnvString("app", "defaultPass", "123"),
+		}).Render("add", gin.H{
+			"defaultPass": yiigo.EnvString("app", "defaultPass", "123"),
 			"roles":       rbac.Roles,
 		})
 
@@ -97,7 +98,7 @@ func (u *UserController) Add(c *gin.Context) {
 
 	if validate := c.ShouldBindWith(form, binding.Form); validate != nil {
 		errors := strings.Split(validate.Error(), "\n")
-		u.json(c, false, i18n.I18NSlice(errors))
+		u.JSON(c, false, i18n.I18NSlice(errors))
 
 		return
 	}
@@ -107,41 +108,41 @@ func (u *UserController) Add(c *gin.Context) {
 	unique, err := userService.CheckUnique(form.Name, form.Email)
 
 	if err != nil {
-		u.json(c, false, "添加失败")
+		u.JSON(c, false, "添加失败")
 		return
 	}
 
 	if !unique {
-		u.json(c, false, "用户名或邮箱已被注册")
+		u.JSON(c, false, "用户名或邮箱已被注册")
 		return
 	}
 
-	defaultPass := yiigo.GetEnvString("app", "defaultPass", "123")
+	defaultPass := yiigo.EnvString("app", "defaultPass", "123")
 	salt := rbac.GenerateSalt()
 
 	data := yiigo.X{
 		"name":     form.Name,
 		"email":    form.Email,
 		"role":     form.Role,
-		"password": helpers.MD5(defaultPass + salt),
+		"password": yiigo.MD5(defaultPass + salt),
 		"salt":     salt,
 	}
 
 	_, err = userService.Add(data)
 
 	if err != nil {
-		u.json(c, false, "添加失败")
+		u.JSON(c, false, "添加失败")
 		return
 	}
 
-	u.json(c, true, "添加成功", nil, "/users")
+	u.JSON(c, true, "添加成功", nil, "/users")
 }
 
 func (u *UserController) Edit(c *gin.Context) {
 	identity := rbac.GetIdentity(c)
 
 	if identity.Role != 3 {
-		u.renderError(c, 403, "无操作权限")
+		u.V(c).RenderErr(403, "无操作权限")
 		return
 	}
 
@@ -154,19 +155,19 @@ func (u *UserController) Edit(c *gin.Context) {
 		user, err := userService.GetDetail(_id)
 
 		if err != nil {
-			if err.Error() == "not found" {
-				u.renderError(c, 404, "用户不存在")
+			if err == sql.ErrNoRows {
+				u.V(c).RenderErr(404, "用户不存在")
 				return
 			}
 
-			u.renderError(c, 500, "数据获取失败")
+			u.V(c).RenderErr(500, "数据获取失败")
 
 			return
 		}
 
-		u.addFuncs(template.FuncMap{
+		u.V(c).F(template.FuncMap{
 			"roleDesc": params.RoleDesc,
-		}).render(c, "edit", gin.H{
+		}).Render("edit", gin.H{
 			"user":  user,
 			"roles": rbac.Roles,
 		})
@@ -178,7 +179,7 @@ func (u *UserController) Edit(c *gin.Context) {
 
 	if validate := c.ShouldBindWith(form, binding.Form); validate != nil {
 		errors := strings.Split(validate.Error(), "\n")
-		u.json(c, false, i18n.I18NSlice(errors))
+		u.JSON(c, false, i18n.I18NSlice(errors))
 
 		return
 	}
@@ -186,12 +187,12 @@ func (u *UserController) Edit(c *gin.Context) {
 	unique, err := userService.CheckUnique(form.Name, form.Email, _id)
 
 	if err != nil {
-		u.json(c, false, "添加失败")
+		u.JSON(c, false, "添加失败")
 		return
 	}
 
 	if !unique {
-		u.json(c, false, "用户名或邮箱已被使用")
+		u.JSON(c, false, "用户名或邮箱已被使用")
 		return
 	}
 
@@ -204,11 +205,11 @@ func (u *UserController) Edit(c *gin.Context) {
 	err = userService.Edit(_id, data)
 
 	if err != nil {
-		u.json(c, false, "编辑失败")
+		u.JSON(c, false, "编辑失败")
 		return
 	}
 
-	u.json(c, true, "编辑成功", nil, "/users")
+	u.JSON(c, true, "编辑成功", nil, "/users")
 }
 
 func (u *UserController) Password(c *gin.Context) {
@@ -216,20 +217,20 @@ func (u *UserController) Password(c *gin.Context) {
 
 	if validate := c.ShouldBindWith(form, binding.Form); validate != nil {
 		errors := strings.Split(validate.Error(), "\n")
-		u.json(c, false, i18n.I18NSlice(errors))
+		u.JSON(c, false, i18n.I18NSlice(errors))
 
 		return
 	}
 
 	if form.Password != form.PasswordRepeat {
-		u.json(c, false, "密码确认错误")
+		u.JSON(c, false, "密码确认错误")
 		return
 	}
 
 	salt := rbac.GenerateSalt()
 
 	data := yiigo.X{
-		"password": helpers.MD5(form.Password + salt),
+		"password": yiigo.MD5(form.Password + salt),
 		"salt":     salt,
 	}
 
@@ -239,29 +240,29 @@ func (u *UserController) Password(c *gin.Context) {
 	err := userService.Edit(identity.ID, data)
 
 	if err != nil {
-		u.json(c, false, "修改失败")
+		u.JSON(c, false, "修改失败")
 		return
 	}
 
-	u.json(c, true, "修改成功", nil, "/users")
+	u.JSON(c, true, "修改成功", nil, "/users")
 }
 
 func (u *UserController) Reset(c *gin.Context) {
 	identity := rbac.GetIdentity(c)
 
 	if identity.Role != 3 {
-		u.renderError(c, 403, "无操作权限")
+		u.V(c).RenderErr(403, "无操作权限")
 		return
 	}
 
 	id := c.Param("id")
 	_id, _ := strconv.Atoi(id)
 
-	defaultPass := yiigo.GetEnvString("app", "defaultPass", "123")
+	defaultPass := yiigo.EnvString("app", "defaultPass", "123")
 	salt := rbac.GenerateSalt()
 
 	data := yiigo.X{
-		"password": helpers.MD5(defaultPass + salt),
+		"password": yiigo.MD5(defaultPass + salt),
 		"salt":     salt,
 	}
 
@@ -269,18 +270,18 @@ func (u *UserController) Reset(c *gin.Context) {
 	err := userService.Edit(_id, data)
 
 	if err != nil {
-		u.json(c, false, "重置失败")
+		u.JSON(c, false, "重置失败")
 		return
 	}
 
-	u.json(c, true, "重置成功", nil, "/users")
+	u.JSON(c, true, "重置成功", nil, "/users")
 }
 
 func (u *UserController) Delete(c *gin.Context) {
 	identity := rbac.GetIdentity(c)
 
 	if identity.Role != 3 {
-		u.renderError(c, 403, "无操作权限")
+		u.V(c).RenderErr(403, "无操作权限")
 		return
 	}
 
@@ -292,9 +293,9 @@ func (u *UserController) Delete(c *gin.Context) {
 	err := userService.Delete(_id)
 
 	if err != nil {
-		u.json(c, false, "删除失败")
+		u.JSON(c, false, "删除失败")
 		return
 	}
 
-	u.json(c, true, "删除成功", nil, "/users")
+	u.JSON(c, true, "删除成功", nil, "/users")
 }

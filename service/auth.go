@@ -1,41 +1,43 @@
 package service
 
 import (
+	"database/sql"
 	"errors"
-	"godoc/dao/mysql"
-	"godoc/helpers"
 
 	"godoc/rbac"
 
 	"github.com/gin-gonic/gin"
+	"github.com/iiinsomnia/yiigo"
 )
 
 type AuthService struct {
-	*service
+	Identity *rbac.Identity
 }
 
 func NewAuthService(c *gin.Context) *AuthService {
 	return &AuthService{
-		construct(c),
+		Identity: rbac.GetIdentity(c),
 	}
 }
 
 // Login 用户登录
 func (a *AuthService) Login(c *gin.Context, account string, password string) error {
-	userDao := mysql.NewUserDao()
 	identity := &rbac.Identity{}
 
-	err := userDao.GetByAccount(account, identity)
+	query := "SELECT id, name, email, password, salt, role, last_login_ip, last_login_time FROM go_user WHERE name = ? OR email = ?"
+	err := yiigo.DB.Get(identity, query, account, account)
 
 	if err != nil {
-		if err.Error() == "not found" {
+		if err == sql.ErrNoRows {
 			return errors.New("帐号不存在")
 		}
+
+		yiigo.Err(err.Error())
 
 		return errors.New("登录失败")
 	}
 
-	if helpers.MD5(password+identity.Salt) != identity.Password {
+	if yiigo.MD5(password+identity.Salt) != identity.Password {
 		return errors.New("帐号或密码错误")
 	}
 

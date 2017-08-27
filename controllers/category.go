@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"database/sql"
 	"fmt"
 	"godoc/i18n"
 	"godoc/rbac"
@@ -35,12 +36,12 @@ func (c *CategoryController) View(ctx *gin.Context) {
 	category, err := categoryService.GetDetail(_id)
 
 	if err != nil {
-		if err.Error() == "not found" {
-			c.renderError(ctx, 404, "类别不存在")
+		if err == sql.ErrNoRows {
+			c.V(ctx).RenderErr(404, "类别不存在")
 			return
 		}
 
-		c.renderError(ctx, 500, "数据获取失败")
+		c.V(ctx).RenderErr(500, "数据获取失败")
 
 		return
 	}
@@ -50,7 +51,7 @@ func (c *CategoryController) View(ctx *gin.Context) {
 	projectService := service.NewProjectService(ctx)
 	projects, _ := projectService.GetProjects(_id)
 
-	c.render(ctx, "view", gin.H{
+	c.V(ctx).Render("view", gin.H{
 		"category":   category,
 		"categories": categories,
 		"projects":   projects,
@@ -61,7 +62,7 @@ func (c *CategoryController) Add(ctx *gin.Context) {
 	identity := rbac.GetIdentity(ctx)
 
 	if identity.Role == 1 {
-		c.renderError(ctx, 403, "无操作权限")
+		c.V(ctx).RenderErr(403, "无操作权限")
 		return
 	}
 
@@ -69,7 +70,7 @@ func (c *CategoryController) Add(ctx *gin.Context) {
 
 	if validate := ctx.ShouldBindWith(form, binding.Form); validate != nil {
 		errors := strings.Split(validate.Error(), "\n")
-		c.json(ctx, false, i18n.I18NSlice(errors))
+		c.JSON(ctx, false, i18n.I18NSlice(errors))
 
 		return
 	}
@@ -82,18 +83,18 @@ func (c *CategoryController) Add(ctx *gin.Context) {
 	id, err := categoryService.Add(data)
 
 	if err != nil {
-		c.json(ctx, false, "添加失败")
+		c.JSON(ctx, false, "添加失败")
 		return
 	}
 
-	c.json(ctx, true, "添加成功", nil, fmt.Sprintf("/categories/view/%d", id))
+	c.JSON(ctx, true, "添加成功", nil, fmt.Sprintf("/categories/view/%d", id))
 }
 
 func (c *CategoryController) Edit(ctx *gin.Context) {
 	identity := rbac.GetIdentity(ctx)
 
 	if identity.Role == 1 {
-		c.renderError(ctx, 403, "无操作权限")
+		c.V(ctx).RenderErr(403, "无操作权限")
 		return
 	}
 
@@ -104,7 +105,7 @@ func (c *CategoryController) Edit(ctx *gin.Context) {
 
 	if validate := ctx.ShouldBindWith(form, binding.Form); validate != nil {
 		errors := strings.Split(validate.Error(), "\n")
-		c.json(ctx, false, i18n.I18NSlice(errors))
+		c.JSON(ctx, false, i18n.I18NSlice(errors))
 
 		return
 	}
@@ -117,18 +118,18 @@ func (c *CategoryController) Edit(ctx *gin.Context) {
 	err := categoryService.Edit(_id, data)
 
 	if err != nil {
-		c.json(ctx, false, "编辑失败")
+		c.JSON(ctx, false, "编辑失败")
 		return
 	}
 
-	c.json(ctx, true, "编辑成功", nil, fmt.Sprintf("/categories/view/%s", id))
+	c.JSON(ctx, true, "编辑成功", nil, fmt.Sprintf("/categories/view/%s", id))
 }
 
 func (c *CategoryController) Delete(ctx *gin.Context) {
 	identity := rbac.GetIdentity(ctx)
 
 	if identity.Role != 3 {
-		c.renderError(ctx, 403, "无操作权限")
+		c.V(ctx).RenderErr(403, "无操作权限")
 		return
 	}
 
@@ -140,9 +141,9 @@ func (c *CategoryController) Delete(ctx *gin.Context) {
 	err := categoryService.Delete(_id)
 
 	if err != nil {
-		c.json(ctx, false, "删除失败")
+		c.JSON(ctx, false, "删除失败")
 		return
 	}
 
-	c.json(ctx, true, "删除成功", nil, "/")
+	c.JSON(ctx, true, "删除成功", nil, "/")
 }

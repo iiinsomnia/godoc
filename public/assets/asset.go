@@ -2,8 +2,9 @@ package assets
 
 import rice "github.com/GeertJohan/go.rice"
 
-var Asset *rice.Box
+var AssetBox *rice.Box
 
-func LoadAssets() {
-	Asset = rice.MustFindBox("../assets")
+// LoadAssets load asset box
+func LoadAssets(path string) {
+	AssetBox = rice.MustFindBox(path)
 }

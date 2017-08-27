@@ -8,14 +8,14 @@ import (
 
 const gosessid = "GOSESSID"
 
-var store = sessions.NewCookieStore([]byte(yiigo.GetEnvString("session", "secret", "N0awmAuS2OziVFu^9!*0LY7MeCRgQ&z0")))
+var store = sessions.NewCookieStore([]byte(yiigo.EnvString("session", "secret", "N0awmAuS2OziVFu^9!*0LY7MeCRgQ&z0")))
 
 // Get 获取session值
 func Get(c *gin.Context, key string, defaultValule ...interface{}) (interface{}, error) {
 	session, err := store.Get(c.Request, gosessid)
 
 	if err != nil {
-		yiigo.LogError(err.Error())
+		yiigo.Err(err.Error())
 		return nil, err
 	}
 
@@ -38,7 +38,7 @@ func Set(c *gin.Context, key string, data interface{}, duration ...int) error {
 	session, err := store.Get(c.Request, gosessid)
 
 	if err != nil {
-		yiigo.LogError(err.Error())
+		yiigo.Err(err.Error())
 		return err
 	}
 
@@ -55,7 +55,7 @@ func Set(c *gin.Context, key string, data interface{}, duration ...int) error {
 	err = session.Save(c.Request, c.Writer)
 
 	if err != nil {
-		yiigo.LogError(err.Error())
+		yiigo.Err(err.Error())
 		return err
 	}
 
@@ -67,7 +67,7 @@ func Delete(c *gin.Context, key string) error {
 	session, err := store.Get(c.Request, gosessid)
 
 	if err != nil {
-		yiigo.LogError(err.Error())
+		yiigo.Err(err.Error())
 		return err
 	}
 
@@ -76,7 +76,7 @@ func Delete(c *gin.Context, key string) error {
 	err = session.Save(c.Request, c.Writer)
 
 	if err != nil {
-		yiigo.LogError(err.Error())
+		yiigo.Err(err.Error())
 		return err
 	}
 
@@ -88,7 +88,7 @@ func Destroy(c *gin.Context) error {
 	session, err := store.Get(c.Request, gosessid)
 
 	if err != nil {
-		yiigo.LogError(err.Error())
+		yiigo.Err(err.Error())
 		return err
 	}
 
@@ -100,7 +100,7 @@ func Destroy(c *gin.Context) error {
 	err = session.Save(c.Request, c.Writer)
 
 	if err != nil {
-		yiigo.LogError(err.Error())
+		yiigo.Err(err.Error())
 		return err
 	}
 
