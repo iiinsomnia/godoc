@@ -12,11 +12,11 @@ go开发的一个简单易用的文档管理系统，用于API等文档的管理
 
 * 去 `release` 下载编译好的执行文件
 * 创建数据库 (godoc - utf8mb4/utf8mb4_general_ci) 并导入 `godoc.sql`
-* 在 `env.ini` 文件中配置数据库信息
+* 在 `env.ini.dev` => `env.ini` 文件中配置数据库信息
 * 执行相应操作系统的可执行文件
 * 访问：`localhost:8000`
 
-> `log.xml` 为日志配置文件，如有需要，请修改此文件
+> `log.xml.dev` => `log.xml` 为日志配置文件，如有需要，请修改此文件
 >
 > 如果你是golang开发者，可以下载源码，`go get github.com/iiinsomnia/yiigo` 后自己运行
 
