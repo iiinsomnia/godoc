@@ -15,10 +15,9 @@ import (
 var viewBox *rice.Box
 
 type View struct {
-	Router  *gin.Engine
-	Ctx     *gin.Context
-	HTML    *HTML
-	Version string
+	Router *gin.Engine
+	Ctx    *gin.Context
+	HTML   *HTML
 }
 
 type HTML struct {
@@ -99,7 +98,7 @@ func (v *View) Render(tpl string, args ...gin.H) {
 		data = args[0]
 	}
 
-	data["version"] = v.Version
+	data["version"] = yiigo.EnvString("app", "version", "1.0.0")
 	data["identity"] = rbac.GetIdentity(v.Ctx)
 
 	v.Ctx.HTML(http.StatusOK, tpl, data)
