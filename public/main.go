@@ -20,7 +20,8 @@ func main() {
 	err := yiigo.Bootstrap(true, false, false)
 
 	if err != nil {
-		yiigo.Err(err.Error())
+		yiigo.Error(err.Error())
+		yiigo.Flush()
 	}
 
 	loadStaticResource()
@@ -46,20 +47,23 @@ func loadRoutes(r *gin.Engine) {
 }
 
 func run() {
-	mode := gin.ReleaseMode
+	debug := yiigo.EnvBool("app", "debug", true)
 
-	if yiigo.EnvBool("app", "debug", false) {
-		mode = gin.DebugMode
+	if !debug {
+		gin.SetMode(gin.ReleaseMode)
 	}
 
-	gin.SetMode(mode)
-
 	r := gin.New()
+
+	if debug {
+		r.Use(gin.Logger(), gin.Recovery())
+	}
+
 	r.Use(middlewares.ErrorMiddleware())
 
 	r.StaticFS("/assets", assets.AssetBox.HTTPBox())
 	r.StaticFile("/favicon.ico", "./favicon.ico")
-	// r.LoadHTMLGlob("../views/**/**/*")
+
 	loadRoutes(r)
 	r.Run(fmt.Sprintf(":%d", yiigo.EnvInt("app", "port", 8000)))
 }
